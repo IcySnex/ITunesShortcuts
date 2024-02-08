@@ -9,29 +9,8 @@
     Title="iTunes Shortcuts"
     mc:Ignorable="d">
 
-    <Grid Padding="24,48,24,24">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="12" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90" />
-                <ColumnDefinition Width="24" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Image Source="../Assets/icon.png" />
-            <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="iTunes Shortcuts" />
-                <TextBlock>
-                    <Run Text="IcySnex •" />
-                    <Hyperlink>GitHub (Source Code)</Hyperlink>
-                </TextBlock>
-                <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Easily manage your iTunes songs with hotkeys" />
-            </StackPanel>
-        </Grid>
-    </Grid>
+    <Frame
+        Name="ContentFrame"
+        Margin="24,36,24,0"
+        x:FieldModifier="public" />
 </Window>

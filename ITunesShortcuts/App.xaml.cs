@@ -42,6 +42,7 @@ public partial class App : Application
                 services.AddSingleton<AppStartupHandler>();
                 services.AddSingleton<WindowHelper>();
                 services.AddSingleton<JsonConverter>();
+                services.AddSingleton<Navigation>();
                 services.AddSingleton<SystemTray>();
             })
             .Build();

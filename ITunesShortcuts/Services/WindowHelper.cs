@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 using Windows.Foundation;
 using WinRT.Interop;
 using Microsoft.UI.Windowing;
+using Windows.UI.ViewManagement;
+using ITunesShortcuts.Helpers;
 
 namespace ITunesShortcuts.Services;
 
@@ -48,10 +50,6 @@ public class WindowHelper
     public static IntPtr GetHWnd(
         Window owner) =>
         WindowNative.GetWindowHandle(owner);
-
-
-    [DllImport("user32.dll")]
-    static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
 
     /// <summary>
@@ -139,6 +137,26 @@ public class WindowHelper
     }
 
     /// <summary>
+    /// Sets the minimum size of the current main window
+    /// </summary>
+    /// <param name="width">The width of the new minimum size</param>
+    /// <param name="height">The height of the new minimum size</param>
+    public void SetMinSize(
+        int width,
+        int height)
+    {
+        IntPtr dpi = Win32.GetDpiForWindow(HWnd);
+
+        Win32.MinWidth = (int)(width * (float)dpi / 96);
+        Win32.MinHeight = (int)(height * (float)dpi / 96);
+
+        Win32.NewWndProc = new Win32.WinProc(Win32.NewWindowProc);
+        Win32.OldWndProc = Win32.SetWindowLong(HWnd, -16 | 0x4 | 0x8, Win32.NewWndProc);
+
+        logger.LogInformation("[WindowHelper-SetMinSize] Set minimum window size [{width}x{height}]", width, height);
+    }
+
+    /// <summary>
     /// Sets the size of the current main window
     /// </summary>
     /// <param name="width">The width of the new size</param>
@@ -168,46 +186,6 @@ public class WindowHelper
         window.Resize(new(width, height));
 
         logger.LogInformation("Set external window size [{width}x{height}]", width, height);
-    }
-
-    /// <summary>
-    /// Sets an UIElement as a custom title bar on the current main window
-    /// </summary>
-    /// <param name="titleBar">The UIElement to set as a title bar</param>
-    /// <param name="container">The container UIElement of the title bar to update visibilies</param>
-    /// <returns>A boolean wether the UIElement was set as the custom title bar successfully</returns>
-    public bool SetTitleBar(
-        UIElement? titleBar,
-        UIElement? container = null)
-    {
-        try
-        {
-            if (titleBar is null)
-            {
-                if (container is not null)
-                    container.Visibility = Visibility.Collapsed;
-
-                mainView.ExtendsContentIntoTitleBar = false;
-                mainView.SetTitleBar(null);
-
-                logger.LogInformation("[WindowHelper-SetTitleBar] Removed custom TitleBar");
-                return true;
-            }
-
-            if (container is not null)
-                container.Visibility = Visibility.Visible;
-
-            mainView.ExtendsContentIntoTitleBar = true;
-            mainView.SetTitleBar(titleBar);
-
-            logger.LogInformation("[WindowHelper-SetTitleBar] Set custom TitleBar");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("Failed to set custom TitleBar: {error}", ex.Message);
-            return false;
-        }
     }
 
 
