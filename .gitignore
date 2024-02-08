@@ -1,0 +1,10 @@
+.vs/
+packages/
+
+*.suo
+*.user
+_ReSharper.*
+
+
+ITunesShortcuts/bin/
+ITunesShortcuts/obj/

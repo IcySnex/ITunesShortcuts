@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ITunesShortcuts (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ITunesShortcuts (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
