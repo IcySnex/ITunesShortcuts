@@ -13,14 +13,16 @@ public class AppStartupHandler
         MainView mainView,
         WindowHelper windowHelper,
         JsonConverter converter,
+        Navigation navigation,
         SystemTray systemTray)
     {
         try
         {
-            windowHelper.SetIcon("icon.ico");
-            windowHelper.SetSize(480, 800);
-
             systemTray.Enable();
+
+            windowHelper.SetIcon("icon.ico");
+            windowHelper.SetMinSize(375, 600);
+            windowHelper.SetSize(480, 800);
 
             mainView.Closed += async (s, e) =>
             {
@@ -35,6 +37,7 @@ public class AppStartupHandler
             };
             mainView.Activate();
 
+            navigation.Navigate("Home");
 
             logger.LogInformation("[AppStartupHandler-.ctor] App fully started.");
         }
