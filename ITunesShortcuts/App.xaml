@@ -33,9 +33,39 @@
                 <Setter Property="Spacing" Value="16" />
             </Style>
 
+            <ControlTemplate x:Key="InfoCard">
+                <Grid
+                    Padding="12,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    CornerRadius="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        Opacity="0.9"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="{TemplateBinding AccessKey}"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <TextBlock
+                        Grid.Column="2"
+                        Margin="0,0,4,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Opacity="0.7"
+                        Text="{TemplateBinding Tag}" />
+                </Grid>
+            </ControlTemplate>
+
             <ControlTemplate x:Key="SettingsCard">
                 <Grid
-                    Padding="12,12,8,12"
+                    Padding="12"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     CornerRadius="8">

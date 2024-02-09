@@ -1,6 +1,7 @@
 ﻿using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
 using ITunesShortcuts.Services;
+using ITunesShortcuts.ViewModels;
 using ITunesShortcuts.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +24,7 @@ public partial class App : Application
             .UseSerilog((context, configuration) =>
             {
                 configuration.WriteTo.Debug();
-                configuration.WriteTo.File(@"logs\-log-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10);
+                configuration.WriteTo.File(@"logs\log-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10);
                 configuration.WriteTo.Sink(Sink);
             })
             .ConfigureAppConfiguration((context, builder) =>
@@ -36,6 +37,9 @@ public partial class App : Application
                 Config config = context.Configuration.Get<Config>() ?? new();
 
                 // Add ViewModels and MainView
+                services.AddSingleton<HomeViewModel>();
+                services.AddSingleton<SettingsViewModel>();
+
                 services.AddSingleton<MainView>();
 
                 // Add services
@@ -43,6 +47,7 @@ public partial class App : Application
                 services.AddSingleton<WindowHelper>();
                 services.AddSingleton<JsonConverter>();
                 services.AddSingleton<Navigation>();
+                services.AddSingleton<ITunesHelper>();
                 services.AddSingleton<SystemTray>();
             })
             .Build();

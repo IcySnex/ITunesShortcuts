@@ -33,31 +33,44 @@
             </StackPanel>
         </Grid>
 
-        <StackPanel Grid.Row="2" Style="{StaticResource ContainerStyle}">
+        <StackPanel Grid.Row="2" Spacing="12">
+            <StackPanel Style="{StaticResource ContainerStyle}">
+                <TextBlock
+                    Margin="0,0,0,4"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="iTunes Information" />
 
-            <TextBlock
-                Margin="0,0,0,4"
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="Settings" />
+                <ContentControl
+                    AccessKey="Current Version:"
+                    Tag="{x:Bind viewModel.Info.Version, TargetNullValue='N/A', FallbackValue='N/A'}"
+                    Template="{StaticResource InfoCard}" />
 
-            <ContentControl AccessKey="Ask For Feedback|Randomly ask for feedback which helps us a lot" Template="{StaticResource SettingsCard}">
-                <ContentControl.Tag>
-                    <SymbolIcon Symbol="Download" />
-                </ContentControl.Tag>
+                <Rectangle Style="{StaticResource DividerStyle}" />
 
-                <Button Content="Hello" />
-            </ContentControl>
+                <ContentControl
+                    AccessKey="Installation Location:"
+                    Tag="{x:Bind viewModel.Info.InstallationLocation, TargetNullValue='N/A', FallbackValue='N/A'}"
+                    Template="{StaticResource InfoCard}" />
 
-            <Rectangle Style="{StaticResource DividerStyle}" />
+                <Rectangle Style="{StaticResource DividerStyle}" />
 
-            <ContentControl AccessKey="Ask For Feedback|Randomly ask for feedback which helps us a lot" Template="{StaticResource SettingsCard}">
-                <ContentControl.Tag>
-                    <SymbolIcon />
-                </ContentControl.Tag>
+                <ContentControl
+                    AccessKey="Installed At:"
+                    Tag="{x:Bind viewModel.Info.InstalledAt.Value.ToString('MMMM d, yyyy'), TargetNullValue='N/A', FallbackValue='N/A'}"
+                    Template="{StaticResource InfoCard}" />
+            </StackPanel>
 
-                <Button Content="Hello" />
-            </ContentControl>
+            <StackPanel Style="{StaticResource ContainerStyle}">
+                <TextBlock
+                    Margin="0,0,0,4"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="Settings" />
 
+                <Button
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind viewModel.NavigateToSettingsCommand}"
+                    Content="Go to Settings" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

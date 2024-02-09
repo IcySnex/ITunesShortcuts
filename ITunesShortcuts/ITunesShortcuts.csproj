@@ -18,14 +18,39 @@
 		<Nullable>enable</Nullable>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 	</PropertyGroup>
+
 	<ItemGroup>
-	  <None Remove="Assets\icon.png" />
-	  <None Remove="Views\HomeView.xaml" />
-	  <None Remove="Views\LoggerView.xaml" />
-	  <None Remove="Views\MainView.xaml" />
+		<None Remove="Assets\icon.png" />
+		<None Remove="Views\HomeView.xaml" />
+		<None Remove="Views\LoggerView.xaml" />
+		<None Remove="Views\MainView.xaml" />
+		<None Remove="Views\SettingsView.xaml" />
 	</ItemGroup>
+
 	<ItemGroup>
-	  <Content Include="icon.ico" />
+		<COMReference Include="IWshRuntimeLibrary">
+			<WrapperTool>tlbimp</WrapperTool>
+			<VersionMinor>0</VersionMinor>
+			<VersionMajor>1</VersionMajor>
+			<Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+			<Lcid>0</Lcid>
+			<Isolated>false</Isolated>
+			<EmbedInteropTypes>true</EmbedInteropTypes>
+		</COMReference>
+		
+		<COMReference Include="iTunesLib">
+		  <VersionMinor>13</VersionMinor>
+		  <VersionMajor>1</VersionMajor>
+		  <Guid>9e93c96f-cf0d-43f6-8ba8-b807a3370712</Guid>
+		  <Lcid>0</Lcid>
+		  <WrapperTool>tlbimp</WrapperTool>
+		  <Isolated>false</Isolated>
+		  <EmbedInteropTypes>true</EmbedInteropTypes>
+		</COMReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="icon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,30 +72,33 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="Assets\icon.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+		<Content Update="Assets\icon.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="icon.ico">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <Page Update="Views\HomeView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<None Update="icon.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<Page Update="Views\SettingsView.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\HomeView.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Views\LoggerView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Views\LoggerView.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Views\MainView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Views\MainView.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
