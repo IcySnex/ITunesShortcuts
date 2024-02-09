@@ -1,4 +1,5 @@
-﻿using ITunesShortcuts.Models;
+﻿using ITunesShortcuts.Helpers;
+using ITunesShortcuts.Models;
 using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,10 +15,14 @@ public class AppStartupHandler
         WindowHelper windowHelper,
         JsonConverter converter,
         Navigation navigation,
+        ITunesHelper iTunesHelper,
         SystemTray systemTray)
     {
         try
         {
+            iTunesHelper.ValidateInstallation();
+            iTunesHelper.ValidateCOMRegistration();
+
             systemTray.Enable();
 
             windowHelper.SetIcon("icon.ico");
@@ -43,7 +48,8 @@ public class AppStartupHandler
         }
         catch (Exception ex)
         {
-            logger.LogInformation("[AppStartupHandler-.ctor] App failed to start: {error}", ex.Message);
+            logger.LogError("[AppStartupHandler-.ctor] App failed to start: {error} ({message})", ex.Message, ex.InnerException?.Message ?? "There was an unexcepted error.");
+            _ = Win32.MessageBox(IntPtr.Zero, ex.InnerException?.Message ?? "There was an unexcepted error.", $"Error: {ex.Message}", Win32.MB_OK | Win32.MB_ICONERROR);
 
             App.Current.Exit();
         }

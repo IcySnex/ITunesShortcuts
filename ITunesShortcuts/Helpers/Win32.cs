@@ -24,6 +24,10 @@ public abstract class Win32
     public static int MinWidth = 0;
     public static int MinHeight = 0;
 
+    public const uint MB_OK = 0x00000000;
+    public const uint MB_YESNO = 0x00000004;
+    public const uint MB_ICONINFORMATION = 0x00000040;
+    public const uint MB_ICONERROR = 0x00000010;
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct POINT
@@ -50,6 +54,8 @@ public abstract class Win32
         public int apartmentType;
     }
 
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
 
     [DllImport("user32.dll")]
     public static extern IntPtr GetDpiForWindow(
@@ -57,6 +63,12 @@ public abstract class Win32
 
     [DllImport("user32")]
     public static extern IntPtr SetWindowLong(
+        IntPtr hWnd,
+        int nIndex,
+        WinProc newProc);
+
+    [DllImport("user32", SetLastError = true)]
+    public static extern IntPtr SetWindowLongPtr(
         IntPtr hWnd,
         int nIndex,
         WinProc newProc);
@@ -69,21 +81,16 @@ public abstract class Win32
         IntPtr wParam,
         IntPtr lParam);
 
-    [DllImport("CoreMessaging.dll")]
-    public static extern IntPtr CreateDispatcherQueueController(
-        [In] DISPATCHERQUEUEOPTIONS options,
-        [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object? dispatcherQueueController);
-
     [DllImport("winbrand.dll", CharSet = CharSet.Unicode)]
     public static extern string BrandingFormatString(
         string format);
 
-    [DllImport("kernel32.dll", EntryPoint = "SetProcessWorkingSetSize", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
-    public static extern bool SetProcessWorkingSetSize(
-        IntPtr hWnd,
-        int minimumWorkingSetSize,
-        int maximumWorkingSetSize);
 
+    public static IntPtr SetWindowLongAll(
+        IntPtr hWnd,
+        int nIndex,
+        WinProc newProc) =>
+        IntPtr.Size == 8 ? SetWindowLongPtr(hWnd, nIndex, newProc) : SetWindowLong(hWnd, nIndex, newProc);
 
     public static IntPtr NewWindowProc(
         IntPtr hWnd,
