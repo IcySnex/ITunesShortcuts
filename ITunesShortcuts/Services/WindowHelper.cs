@@ -5,12 +5,11 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml;
 using Microsoft.UI;
-using System.Runtime.InteropServices;
 using Windows.Foundation;
 using WinRT.Interop;
 using Microsoft.UI.Windowing;
-using Windows.UI.ViewManagement;
 using ITunesShortcuts.Helpers;
+using Microsoft.UI.Dispatching;
 
 namespace ITunesShortcuts.Services;
 
@@ -102,10 +101,18 @@ public class WindowHelper
 
 
     /// <summary>
+    /// Trys to enque a callack to the current main views dispatcher queue
+    /// </summary>
+    public void EnqueDispatcher(
+        DispatcherQueueHandler callback) =>
+        mainView.DispatcherQueue.TryEnqueue(callback);
+    
+
+    /// <summary>
     /// Closes the current main window
     /// </summary>
     public void Close() =>
-        mainView.DispatcherQueue.TryEnqueue(mainView.Close);
+        EnqueDispatcher(mainView.Close);
     
 
     /// <summary>
@@ -151,7 +158,7 @@ public class WindowHelper
         Win32.MinHeight = (int)(height * (float)dpi / 96);
 
         Win32.NewWndProc = new Win32.WinProc(Win32.NewWindowProc);
-        Win32.OldWndProc = Win32.SetWindowLong(HWnd, -16 | 0x4 | 0x8, Win32.NewWndProc);
+        Win32.OldWndProc = Win32.SetWindowLongAll(HWnd, -16 | 0x4 | 0x8, Win32.NewWndProc);
 
         logger.LogInformation("[WindowHelper-SetMinSize] Set minimum window size [{width}x{height}]", width, height);
     }

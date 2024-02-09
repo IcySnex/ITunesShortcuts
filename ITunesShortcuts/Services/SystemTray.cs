@@ -8,6 +8,7 @@ public class SystemTray
 {
     readonly ILogger<SystemTray> logger;
     readonly WindowHelper windowHelper;
+    readonly Navigation navigation;
 
     TrayIconWithContextMenu? icon;
     readonly PopupMenuItem exitItem = default!;
@@ -17,10 +18,12 @@ public class SystemTray
 
     public SystemTray(
         ILogger<SystemTray> logger,
-        WindowHelper windowHelper)
+        WindowHelper windowHelper,
+        Navigation navigation)
     {
         this.logger = logger;
         this.windowHelper = windowHelper;
+        this.navigation = navigation;
 
         toggleShortcutsItem = new("Disable all shortcuts", (_, _) => ToggleShortcuts());
         toogleWindowItem = new("Hide window", (_, _) => ToogleWindow());
@@ -98,8 +101,16 @@ public class SystemTray
         toogleWindowItem.Text = "Show window";
     }
 
-    public void Settings() =>
-        throw new NotImplementedException();
+    public void Settings()
+    {
+        if (toogleWindowItem.Text == "Show window")
+        {
+            windowHelper.SetVisibility(true);
+            toogleWindowItem.Text = "Hide window";
+        }
+
+        windowHelper.EnqueDispatcher(() => navigation.Navigate("Settings"));
+    }
 
     public void Exit() =>
         windowHelper.Close();
