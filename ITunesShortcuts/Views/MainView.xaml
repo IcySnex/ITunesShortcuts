@@ -9,8 +9,5 @@
     Title="iTunes Shortcuts"
     mc:Ignorable="d">
 
-    <Frame
-        Name="ContentFrame"
-        Margin="24,36,24,0"
-        x:FieldModifier="public" />
+    <Frame Name="ContentFrame" x:FieldModifier="public" />
 </Window>
