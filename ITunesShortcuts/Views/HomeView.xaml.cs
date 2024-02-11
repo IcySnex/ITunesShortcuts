@@ -9,6 +9,8 @@ public sealed partial class HomeView : Page
 
     public HomeView()
     {
+        DataContext = viewModel;
+
         this.InitializeComponent();
     }
 }

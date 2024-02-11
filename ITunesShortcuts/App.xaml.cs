@@ -29,7 +29,7 @@ public partial class App : Application
             })
             .ConfigureAppConfiguration((context, builder) =>
             {
-                builder.AddJsonFile("Configuration.json", true);
+                builder.AddJsonFile("configuration.json", true);
             })
             .ConfigureServices((context, services) =>
             {
@@ -49,6 +49,7 @@ public partial class App : Application
                 services.AddSingleton<Navigation>();
                 services.AddSingleton<ITunesHelper>();
                 services.AddSingleton<SystemTray>();
+                services.AddSingleton<ShortcutManager>();
             })
             .Build();
         Provider = host.Services;

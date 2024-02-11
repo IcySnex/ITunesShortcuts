@@ -16,12 +16,15 @@ public class AppStartupHandler
         JsonConverter converter,
         Navigation navigation,
         ITunesHelper iTunesHelper,
-        SystemTray systemTray)
+        SystemTray systemTray,
+        ShortcutManager shortcutManager)
     {
         try
         {
             iTunesHelper.ValidateInstallation();
             iTunesHelper.ValidateCOMRegistration();
+
+            shortcutManager.Load();
 
             systemTray.Enable();
 
@@ -29,16 +32,16 @@ public class AppStartupHandler
             windowHelper.SetMinSize(375, 600);
             windowHelper.SetSize(480, 800);
 
-            mainView.Closed += async (s, e) =>
+            mainView.Closed += (s, e) =>
             {
                 systemTray.Disable();
 
                 windowHelper.LoggerView?.Close();
 
                 string config = converter.ToString(configuration.Value);
-                await File.WriteAllTextAsync("Configuration.json", config);
+                File.WriteAllText("configuration.json", config);
 
-                logger.LogInformation("[MainView-Closed] Closed main window");
+                logger.LogInformation("[MainView-Closed] Closed main window.");
             };
             mainView.Activate();
 
