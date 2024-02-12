@@ -21,6 +21,7 @@
 
 	<ItemGroup>
 		<None Remove="Assets\icon.png" />
+		<None Remove="Views\CreateShortcutView.xaml" />
 		<None Remove="Views\HomeView.xaml" />
 		<None Remove="Views\LoggerView.xaml" />
 		<None Remove="Views\MainView.xaml" />
@@ -28,15 +29,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<COMReference Include="IWshRuntimeLibrary">
-			<WrapperTool>tlbimp</WrapperTool>
-			<VersionMinor>0</VersionMinor>
-			<VersionMajor>1</VersionMajor>
-			<Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
-			<Lcid>0</Lcid>
-			<Isolated>false</Isolated>
-			<EmbedInteropTypes>true</EmbedInteropTypes>
-		</COMReference>
 		
 		<COMReference Include="iTunesLib">
 		  <VersionMinor>13</VersionMinor>
@@ -44,6 +36,16 @@
 		  <Guid>9e93c96f-cf0d-43f6-8ba8-b807a3370712</Guid>
 		  <Lcid>0</Lcid>
 		  <WrapperTool>tlbimp</WrapperTool>
+		  <Isolated>false</Isolated>
+		  <EmbedInteropTypes>true</EmbedInteropTypes>
+		</COMReference>
+		
+		<COMReference Include="IWshRuntimeLibrary">
+		  <WrapperTool>tlbimp</WrapperTool>
+		  <VersionMinor>0</VersionMinor>
+		  <VersionMajor>1</VersionMajor>
+		  <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+		  <Lcid>0</Lcid>
 		  <Isolated>false</Isolated>
 		  <EmbedInteropTypes>true</EmbedInteropTypes>
 		</COMReference>
@@ -104,4 +106,12 @@
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <CustomAdditionalCompileInputs Remove="Views\CreateShortcutView.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Remove="Views\CreateShortcutView.xaml" />
+	</ItemGroup>
 </Project>

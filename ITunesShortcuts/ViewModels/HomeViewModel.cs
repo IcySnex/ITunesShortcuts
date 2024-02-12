@@ -2,8 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using ITunesShortcuts.Models;
 using ITunesShortcuts.Services;
+using ITunesShortcuts.Views;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 
 namespace ITunesShortcuts.ViewModels;
 
@@ -33,10 +37,24 @@ public partial class HomeViewModel : ObservableObject
     [RelayCommand]
     async Task CreateShortcutAsync()
     {
-        if (await windowHelper.AlertAsync("ello pookie", "Create new Shortcut", "Cancel", "Save") != ContentDialogResult.Primary)
+        CreateShortcutViewModel viewModel = App.Provider.GetRequiredService<CreateShortcutViewModel>();
+        CreateShortcutView view = new(viewModel);
+        ContentDialog dialog = new()
         {
+            Content = view,
+            Title = "Create new Shortcut",
+            CloseButtonText = "Cancel",
+            PrimaryButtonText = "Save"
+        };
+        dialog.SetBinding(ContentDialog.IsPrimaryButtonEnabledProperty, new Binding()
+        {
+            Source = viewModel,
+            Path = new PropertyPath("IsValid"),
+            Mode = BindingMode.OneWay
+        });
+
+        if (await windowHelper.AlertAsync(dialog) != ContentDialogResult.Primary)
             return;
-        }
 
         ShortcutManager.Save();
     }

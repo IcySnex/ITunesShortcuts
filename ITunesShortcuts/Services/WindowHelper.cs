@@ -229,7 +229,7 @@ public class WindowHelper
         ContentDialog dialog = new()
         {
             Content = content,
-            Title = title is null ? null : title + "!",
+            Title = title,
             CloseButtonText = closeButton,
             PrimaryButtonText = primaryButton
         };
