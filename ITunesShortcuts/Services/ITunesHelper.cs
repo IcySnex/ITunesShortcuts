@@ -91,7 +91,7 @@ public class ITunesHelper
         if (IsInstalled())
             return;
 
-        int response = Win32.MessageBox(IntPtr.Zero, "ITunes installation was not found. This application requires iTunes to be installed on the system.\nDo you want to ignore this error (may cause unexcepted crashes)?", "Error: iTunes not installed", Win32.MB_YESNO | Win32.MB_ICONERROR);
+        int response = Win32.MessageBox(IntPtr.Zero, "ITunes installation was not found.\nThis application requires iTunes to be installed on the system.\nDo you want to ignore this error (may cause unexcepted crashes)?", "Error", Win32.MB_YESNO | Win32.MB_ICONERROR);
         logger.LogError("[ITunesHelper-ValidateInstallation] iTunes installation was not found: [{ignore}]", response == 7 ? "Exiting" : "Ignoring");
 
         if (response == 7)
@@ -106,7 +106,7 @@ public class ITunesHelper
         if (IsCOMRegistered())
             return;
 
-        int response = Win32.MessageBox(IntPtr.Zero, "ITunes COM registration failed. This application requires iTunes COM to be registered.\nDo you want to ignore this error (may cause unexcepted crashes)?", "Error: iTunes COM not registered", Win32.MB_YESNO | Win32.MB_ICONERROR);
+        int response = Win32.MessageBox(IntPtr.Zero, "ITunes COM registration failed.\nThis application requires iTunes COM to be registered.\nDo you want to ignore this error (may cause unexcepted crashes)?", "Error", Win32.MB_YESNO | Win32.MB_ICONERROR);
         logger.LogError("[ITunesHelper-ValidateCOMRegistration] iTunes COM registration failed: [{ignore}]", response == 7 ? "Exiting" : "Ignoring");
 
         if (response == 7)

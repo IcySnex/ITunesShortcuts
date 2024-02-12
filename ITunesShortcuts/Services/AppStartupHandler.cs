@@ -3,6 +3,7 @@ using ITunesShortcuts.Models;
 using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics;
 
 namespace ITunesShortcuts.Services;
 
@@ -17,7 +18,8 @@ public class AppStartupHandler
         Navigation navigation,
         ITunesHelper iTunesHelper,
         SystemTray systemTray,
-        ShortcutManager shortcutManager)
+        ShortcutManager shortcutManager,
+        KeyboardListener keyboardListener)
     {
         try
         {
@@ -25,6 +27,8 @@ public class AppStartupHandler
             iTunesHelper.ValidateCOMRegistration();
 
             shortcutManager.Load();
+
+            keyboardListener.Start();
 
             systemTray.Enable();
 
@@ -34,6 +38,8 @@ public class AppStartupHandler
 
             mainView.Closed += (s, e) =>
             {
+                keyboardListener.Stop();
+
                 systemTray.Disable();
 
                 windowHelper.LoggerView?.Close();
@@ -52,9 +58,9 @@ public class AppStartupHandler
         catch (Exception ex)
         {
             logger.LogError("[AppStartupHandler-.ctor] App failed to start: {error} ({message})", ex.Message, ex.InnerException?.Message ?? "There was an unexcepted error.");
-            _ = Win32.MessageBox(IntPtr.Zero, ex.InnerException?.Message ?? "There was an unexcepted error.", $"Error: {ex.Message}", Win32.MB_OK | Win32.MB_ICONERROR);
+            _ = Win32.MessageBox(IntPtr.Zero, $"Error: {ex.Message}\n{ex.InnerException?.Message ?? "There was an unexcepted error."}", $"Error", Win32.MB_OK | Win32.MB_ICONERROR);
 
-            App.Current.Exit();
+            Process.GetCurrentProcess().Kill();
         }
     }
 }
