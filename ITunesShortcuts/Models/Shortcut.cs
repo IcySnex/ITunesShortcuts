@@ -1,4 +1,4 @@
-﻿using GlobalHotKeys.Native.Types;
+﻿using ITunesShortcuts.Enums;
 
 namespace ITunesShortcuts.Models;
 
@@ -7,7 +7,7 @@ public class Shortcut
     public Shortcut(
         string name,
         Modifiers modifiers,
-        VirtualKeyCode key,
+        Key key,
         string action,
         string parameter)
     {
@@ -22,7 +22,7 @@ public class Shortcut
 
     public Modifiers Modifiers { get; }
 
-    public VirtualKeyCode Key { get; }
+    public Key Key { get; }
 
     public string Action { get; }
 

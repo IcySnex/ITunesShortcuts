@@ -66,9 +66,9 @@
                                 Grid.Column="4"
                                 Orientation="Horizontal"
                                 Spacing="4">
-                                <ContentControl hlp:Attributes.Title="{x:Bind hlp:Xaml.ModifierToString(Modifiers)}" Template="{StaticResource Button}" />
+                                <ContentControl hlp:Attributes.Title="{x:Bind Modifiers}" Template="{StaticResource Button}" />
 
-                                <ContentControl hlp:Attributes.Title="{x:Bind hlp:Xaml.KeyToString(Key)}" Template="{StaticResource Button}" />
+                                <ContentControl hlp:Attributes.Title="{x:Bind Key, Converter={StaticResource KeyToStringConverter}}" Template="{StaticResource Button}" />
 
                                 <FontIcon
                                     Margin="8,0,0,0"
@@ -148,9 +148,9 @@
                         Grid.Column="4"
                         Orientation="Horizontal"
                         Spacing="4">
-                        <ContentControl hlp:Attributes.Title="{x:Bind hlp:Xaml.ModifierToString(Modifiers)}" Template="{StaticResource Button}" />
+                        <ContentControl hlp:Attributes.Title="{x:Bind Modifiers}" Template="{StaticResource Button}" />
 
-                        <ContentControl hlp:Attributes.Title="{x:Bind hlp:Xaml.KeyToString(Key)}" Template="{StaticResource Button}" />
+                        <ContentControl hlp:Attributes.Title="{x:Bind Key, Converter={StaticResource KeyToStringConverter}}" Template="{StaticResource Button}" />
 
                         <FontIcon
                             Margin="8,0,0,0"
