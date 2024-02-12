@@ -39,6 +39,7 @@ public partial class App : Application
                 // Add ViewModels and MainView
                 services.AddSingleton<HomeViewModel>();
                 services.AddSingleton<SettingsViewModel>();
+                services.AddTransient<CreateShortcutViewModel>();
 
                 services.AddSingleton<MainView>();
 
@@ -50,6 +51,7 @@ public partial class App : Application
                 services.AddSingleton<ITunesHelper>();
                 services.AddSingleton<SystemTray>();
                 services.AddSingleton<ShortcutManager>();
+                services.AddSingleton<KeyboardListener>();
             })
             .Build();
         Provider = host.Services;

@@ -17,7 +17,6 @@
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
             <conv:KeyToStringConverter x:Key="KeyToStringConverter" />
-            <conv:ModifiersToIndexConverter x:Key="ModifiersToIndexConverter" />
 
 
             <!--  Styles  -->
@@ -37,103 +36,141 @@
                 <Setter Property="Spacing" Value="16" />
             </Style>
 
+            <Style
+                x:Key="KeyButtonStyle"
+                BasedOn="{StaticResource DefaultToggleButtonStyle}"
+                TargetType="ToggleButton">
+                <Setter Property="Padding" Value="8" />
+                <Setter Property="Height" Value="48" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="IsTabStop" Value="False" />
+            </Style>
+
 
             <!--  Templates  -->
-            <ControlTemplate x:Key="InfoCard">
-                <Grid Padding="12,0" HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+            <Style x:Key="WithHeader" TargetType="ContentControl">
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="2" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
 
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="15"
-                        Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                        Style="{StaticResource BodyStrongTextBlockStyle}"
-                        Text="{TemplateBinding hlp:Attributes.Title}"
-                        TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    Margin="4,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="{TemplateBinding hlp:Attributes.Title}" />
 
-                    <TextBlock
-                        Grid.Column="2"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Foreground="{StaticResource TextFillColorTertiaryBrush}"
-                        Text="{TemplateBinding hlp:Attributes.Description}" />
-                </Grid>
-            </ControlTemplate>
+                                <ContentPresenter Grid.Row="3" HorizontalAlignment="Stretch" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-            <ControlTemplate x:Key="SettingsCard">
-                <Grid Padding="12,0" HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+            <Style x:Key="InfoCard" TargetType="ContentControl">
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Grid Padding="12,0" HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                    <FontIcon
-                        FontSize="24"
-                        Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                        Glyph="{TemplateBinding hlp:Attributes.Glyph}" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="15"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="{TemplateBinding hlp:Attributes.Title}"
+                                    TextTrimming="CharacterEllipsis" />
 
-                    <TextBlock
-                        Grid.Column="2"
-                        Margin="0,0,0,16"
-                        VerticalAlignment="Center"
-                        FontSize="15"
-                        Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                        Style="{StaticResource BodyStrongTextBlockStyle}"
-                        Text="{TemplateBinding hlp:Attributes.Title}"
-                        TextTrimming="CharacterEllipsis" />
-                    <TextBlock
-                        Grid.Column="2"
-                        Margin="0,15,0,0"
-                        VerticalAlignment="Center"
-                        Foreground="{StaticResource TextFillColorTertiaryBrush}"
-                        Text="{TemplateBinding hlp:Attributes.Description}"
-                        TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Foreground="{StaticResource TextFillColorTertiaryBrush}"
+                                    Text="{TemplateBinding hlp:Attributes.Description}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-                    <ContentPresenter Grid.Column="4" HorizontalAlignment="Right" />
-                </Grid>
-            </ControlTemplate>
+            <Style x:Key="SettingsCard" TargetType="ContentControl">
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Grid Padding="12,0" HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-            <ControlTemplate x:Key="Container">
-                <Grid HorizontalAlignment="Stretch">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="2" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+                                <FontIcon
+                                    FontSize="24"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Glyph="{TemplateBinding hlp:Attributes.Glyph}" />
 
-                    <TextBlock
-                        Margin="4,0,0,0"
-                        HorizontalAlignment="Left"
-                        Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                        Text="{TemplateBinding hlp:Attributes.Title}" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    Margin="0,0,0,16"
+                                    VerticalAlignment="Center"
+                                    FontSize="15"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="{TemplateBinding hlp:Attributes.Title}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    Margin="0,15,0,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{StaticResource TextFillColorTertiaryBrush}"
+                                    Text="{TemplateBinding hlp:Attributes.Description}"
+                                    TextTrimming="CharacterEllipsis" />
 
-                    <ContentPresenter Grid.Row="3" HorizontalAlignment="Stretch" />
-                </Grid>
-            </ControlTemplate>
+                                <ContentPresenter Grid.Column="4" HorizontalAlignment="Right" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-            <ControlTemplate x:Key="Button">
-                <Grid
-                    Height="30"
-                    Padding="8,0"
-                    Background="{StaticResource AccentAAFillColorDefaultBrush}"
-                    BorderBrush="{StaticResource AccentAAFillColorTertiaryBrush}"
-                    BorderThickness="1"
-                    CornerRadius="4">
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontWeight="Medium"
-                        Foreground="{StaticResource TextOnAccentAAFillColorPrimary}"
-                        Text="{TemplateBinding hlp:Attributes.Title}" />
-                </Grid>
-            </ControlTemplate>
+            <Style x:Key="Key" TargetType="ContentControl">
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Grid
+                                Height="30"
+                                Padding="8,0"
+                                Background="{StaticResource AccentAAFillColorDefaultBrush}"
+                                BorderBrush="{StaticResource AccentAAFillColorTertiaryBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontWeight="Medium"
+                                    Foreground="{StaticResource TextOnAccentAAFillColorPrimary}"
+                                    Text="{TemplateBinding hlp:Attributes.Title}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
 
             <!--  Default Override  -->

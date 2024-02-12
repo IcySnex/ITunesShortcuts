@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enm="using:ITunesShortcuts.Enums"
     xmlns:hlp="using:ITunesShortcuts.Helpers"
     xmlns:local="using:ITunesShortcuts.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,87 +15,95 @@
     mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Key="ShortcutWithDividerTemplate" x:DataType="mdl:Shortcut">
-            <Grid>
-                <StackPanel>
-                    <Grid
-                        Padding="12,0"
-                        HorizontalAlignment="Stretch"
+            <StackPanel>
+                <Grid
+                    Padding="12,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    CornerRadius="8">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <FontIcon
+                        FontSize="24"
+                        Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                        Glyph="&#xe81c;" />
+
+                    <TextBlock
+                        Grid.Column="2"
+                        Margin="0,0,0,16"
                         VerticalAlignment="Center"
-                        CornerRadius="8">
+                        FontSize="15"
+                        Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="{x:Bind Name}"
+                        TextTrimming="CharacterEllipsis" />
+                    <TextBlock
+                        Grid.Column="2"
+                        Margin="0,15,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="{StaticResource TextFillColorTertiaryBrush}"
+                        TextTrimming="CharacterEllipsis">
+                        <Run Text="{x:Bind Action}" /><Run Text=":" />
+                        <Run Foreground="{StaticResource TextFillColorDisabledBrush}" Text="{x:Bind Parameter}" />
+                    </TextBlock>
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="12" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="12" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="12" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="8" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                    <Button
+                        Grid.Column="6"
+                        Padding="8"
+                        HorizontalAlignment="Right">
+                        <StackPanel
+                            Grid.Column="4"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <ItemsRepeater ItemsSource="{x:Bind Modifiers}">
+                                <ItemsRepeater.Layout>
+                                    <StackLayout Orientation="Vertical" Spacing="4" />
+                                </ItemsRepeater.Layout>
 
-                        <FontIcon
-                            FontSize="24"
-                            Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                            Glyph="&#xe81c;" />
+                                <ItemsRepeater.ItemTemplate>
+                                    <DataTemplate x:DataType="enm:Modifier">
+                                        <ContentControl hlp:Attributes.Title="{x:Bind}" Style="{StaticResource Key}" />
+                                    </DataTemplate>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
 
-                        <TextBlock
-                            Grid.Column="2"
-                            Margin="0,0,0,16"
-                            VerticalAlignment="Center"
-                            FontSize="15"
-                            Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                            Style="{StaticResource BodyStrongTextBlockStyle}"
-                            Text="{x:Bind Name}"
-                            TextTrimming="CharacterEllipsis" />
-                        <TextBlock
-                            Grid.Column="2"
-                            Margin="0,15,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{StaticResource TextFillColorTertiaryBrush}"
-                            TextTrimming="CharacterEllipsis">
-                            <Run Text="{x:Bind Action}" /><Run Text=":" />
-                            <Run Foreground="{StaticResource TextFillColorDisabledBrush}" Text="{x:Bind Parameter}" />
-                        </TextBlock>
+                            <ContentControl hlp:Attributes.Title="{x:Bind Key, Converter={StaticResource KeyToStringConverter}}" Style="{StaticResource Key}" />
 
-                        <Button
-                            Grid.Column="6"
-                            Padding="8"
-                            HorizontalAlignment="Right">
-                            <StackPanel
-                                Grid.Column="4"
-                                Orientation="Horizontal"
-                                Spacing="4">
-                                <ContentControl hlp:Attributes.Title="{x:Bind Modifiers}" Template="{StaticResource Button}" />
+                            <FontIcon
+                                Margin="8,0,0,0"
+                                FontSize="16"
+                                Glyph="&#xe70f;" />
+                        </StackPanel>
+                    </Button>
 
-                                <ContentControl hlp:Attributes.Title="{x:Bind Key, Converter={StaticResource KeyToStringConverter}}" Template="{StaticResource Button}" />
+                    <Button
+                        Grid.Column="8"
+                        Width="32"
+                        Padding="0"
+                        VerticalAlignment="Stretch"
+                        Command="{Binding DataContext.RemoveShortcutCommand, ElementName=RootPage}"
+                        CommandParameter="{x:Bind}">
+                        <FontIcon FontSize="16" Glyph="&#xe74d;" />
+                    </Button>
+                </Grid>
 
-                                <FontIcon
-                                    Margin="8,0,0,0"
-                                    FontSize="16"
-                                    Glyph="&#xe70f;" />
-                            </StackPanel>
-                        </Button>
-
-                        <Button
-                            Grid.Column="8"
-                            Width="32"
-                            Padding="0"
-                            VerticalAlignment="Stretch"
-                            Command="{Binding DataContext.RemoveShortcutCommand, ElementName=RootPage}"
-                            CommandParameter="{x:Bind}">
-                            <FontIcon FontSize="16" Glyph="&#xe74d;" />
-                        </Button>
-                    </Grid>
-
-                    <Rectangle
-                        Grid.ColumnSpan="7"
-                        Margin="-16,16,-16,0"
-                        VerticalAlignment="Bottom"
-                        Style="{StaticResource DividerStyle}" />
-                </StackPanel>
-            </Grid>
+                <Rectangle
+                    Grid.ColumnSpan="7"
+                    Margin="-16,16,-16,0"
+                    VerticalAlignment="Bottom"
+                    Style="{StaticResource DividerStyle}" />
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="ShortcutTemplate" x:DataType="mdl:Shortcut">
@@ -148,9 +157,19 @@
                         Grid.Column="4"
                         Orientation="Horizontal"
                         Spacing="4">
-                        <ContentControl hlp:Attributes.Title="{x:Bind Modifiers}" Template="{StaticResource Button}" />
+                        <ItemsRepeater ItemsSource="{x:Bind Modifiers}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Vertical" Spacing="4" />
+                            </ItemsRepeater.Layout>
 
-                        <ContentControl hlp:Attributes.Title="{x:Bind Key, Converter={StaticResource KeyToStringConverter}}" Template="{StaticResource Button}" />
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="enm:Modifier">
+                                    <ContentControl hlp:Attributes.Title="{x:Bind}" Style="{StaticResource Key}" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+
+                        <ContentControl hlp:Attributes.Title="{x:Bind Key, Converter={StaticResource KeyToStringConverter}}" Style="{StaticResource Key}" />
 
                         <FontIcon
                             Margin="8,0,0,0"

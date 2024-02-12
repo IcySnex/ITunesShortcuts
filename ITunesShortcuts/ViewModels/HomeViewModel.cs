@@ -56,6 +56,9 @@ public partial class HomeViewModel : ObservableObject
         if (await windowHelper.AlertAsync(dialog) != ContentDialogResult.Primary)
             return;
 
+        Shortcut shortcut = new(viewModel.Name, viewModel.Key!.Value, viewModel.Modifiers, "", "");
+
+        ShortcutManager.Shortcuts.Add(shortcut);
         ShortcutManager.Save();
     }
 

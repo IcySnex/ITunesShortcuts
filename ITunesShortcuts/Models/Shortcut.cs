@@ -6,23 +6,23 @@ public class Shortcut
 {
     public Shortcut(
         string name,
-        Modifier modifiers,
         Key key,
+        HashSet<Modifier> modifiers,
         string action,
         string parameter)
     {
         this.Name = name;
-        this.Modifiers = modifiers;
         this.Key = key;
+        this.Modifiers = modifiers;
         this.Action = action;
         this.Parameter = parameter;
     }
 
     public string Name { get; }
 
-    public Modifier Modifiers { get; }
-
     public Key Key { get; }
+
+    public HashSet<Modifier> Modifiers { get; }
 
     public string Action { get; }
 

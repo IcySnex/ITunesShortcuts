@@ -49,7 +49,7 @@
                 hlp:Attributes.Description="Run iTunesShortcuts at Windows startup"
                 hlp:Attributes.Glyph="&#xe81c;"
                 hlp:Attributes.Title="Auto Start"
-                Template="{StaticResource SettingsCard}">
+                Style="{StaticResource SettingsCard}">
 
                 <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.IsAutoStartEnabled, Mode=TwoWay}" />
             </ContentControl>
@@ -60,7 +60,7 @@
                 hlp:Attributes.Description="Run iTunesShortcuts at Windows startup"
                 hlp:Attributes.Glyph="&#xe81c;"
                 hlp:Attributes.Title="Auto Start"
-                Template="{StaticResource SettingsCard}">
+                Style="{StaticResource SettingsCard}">
 
                 <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.IsAutoStartEnabled, Mode=TwoWay}" />
             </ContentControl>
@@ -75,21 +75,21 @@
             <ContentControl
                 hlp:Attributes.Description="{x:Bind viewModel.Info.Version, TargetNullValue='N/A', FallbackValue='N/A'}"
                 hlp:Attributes.Title="Current Version:"
-                Template="{StaticResource InfoCard}" />
+                Style="{StaticResource InfoCard}" />
 
             <Rectangle Style="{StaticResource DividerStyle}" />
 
             <ContentControl
                 hlp:Attributes.Description="{x:Bind viewModel.Info.InstallationLocation, TargetNullValue='N/A', FallbackValue='N/A'}"
                 hlp:Attributes.Title="Installation Location:"
-                Template="{StaticResource InfoCard}" />
+                Style="{StaticResource InfoCard}" />
 
             <Rectangle Style="{StaticResource DividerStyle}" />
 
             <ContentControl
                 hlp:Attributes.Description="{x:Bind viewModel.Info.InstalledAt.Value.ToString('MMMM d, yyyy'), TargetNullValue='N/A', FallbackValue='N/A'}"
                 hlp:Attributes.Title="Installed At:"
-                Template="{StaticResource InfoCard}" />
+                Style="{StaticResource InfoCard}" />
         </StackPanel>
     </StackPanel>
 </Page>
