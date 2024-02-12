@@ -6,7 +6,7 @@ public class Shortcut
 {
     public Shortcut(
         string name,
-        Modifiers modifiers,
+        Modifier modifiers,
         Key key,
         string action,
         string parameter)
@@ -20,7 +20,7 @@ public class Shortcut
 
     public string Name { get; }
 
-    public Modifiers Modifiers { get; }
+    public Modifier Modifiers { get; }
 
     public Key Key { get; }
 

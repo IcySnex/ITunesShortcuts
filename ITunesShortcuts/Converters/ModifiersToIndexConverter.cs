@@ -6,24 +6,30 @@ namespace ITunesShortcuts.Converters;
 public class ModifiersToIndexConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language) =>
-         (Modifiers)value switch
+         value is null ? 0 : (Modifier)value switch
          {
-             Modifiers.None => 0,
-             Modifiers.Alt => 1,
-             Modifiers.Ctrl => 2,
-             Modifiers.Shift => 3,
-             Modifiers.Win => 4,
-             _ => -1
+             Modifier.LAlt => 164,
+             Modifier.RAlt => 165,
+             Modifier.LCtrl => 162,
+             Modifier.RCtrl => 163,
+             Modifier.LShift => 160,
+             Modifier.RShift => 161,
+             Modifier.LWin => 91,
+             Modifier.RWin => 92,
+             _ => 0
          };
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
-        (int)value switch
+        value is null ? default : (int)value switch
         {
-            0 => Modifiers.None,
-            1 => Modifiers.Alt,
-            2 => Modifiers.Ctrl,
-            3 => Modifiers.Shift,
-            4 => Modifiers.Win,
+            164 => Modifier.LAlt,
+            165 => Modifier.RAlt,
+            162 => Modifier.LCtrl,
+            163 => Modifier.RCtrl,
+            160 => Modifier.LShift,
+            161 => Modifier.RShift,
+            91 => Modifier.LWin,
+            92 => Modifier.RWin,
             _ => default
         };
 }
