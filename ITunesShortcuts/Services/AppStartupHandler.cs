@@ -3,7 +3,6 @@ using ITunesShortcuts.Models;
 using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Diagnostics;
 
 namespace ITunesShortcuts.Services;
 
@@ -16,6 +15,7 @@ public class AppStartupHandler
         WindowHelper windowHelper,
         JsonConverter converter,
         Navigation navigation,
+        Notifications notifications,
         ITunesHelper iTunesHelper,
         SystemTray systemTray,
         ShortcutManager shortcutManager,
@@ -26,11 +26,9 @@ public class AppStartupHandler
             iTunesHelper.ValidateInstallation();
             iTunesHelper.ValidateCOMRegistration();
 
-            keyboardListener.Start();
+            notifications.Register();
 
-            systemTray.Enable();
-            if (configuration.Value.LaunchMinimized)
-                systemTray.ToggleWindow();
+            keyboardListener.Start();
 
             shortcutManager.Load();
 
@@ -40,6 +38,8 @@ public class AppStartupHandler
 
             mainView.Closed += (s, e) =>
             {
+                notifications.Unregister();
+
                 keyboardListener.Stop();
 
                 systemTray.Disable();
@@ -51,7 +51,11 @@ public class AppStartupHandler
 
                 logger.LogInformation("[MainView-Closed] Closed main window.");
             };
-            if (!configuration.Value.LaunchMinimized)
+
+            systemTray.Enable();
+            if (configuration.Value.LaunchMinimized)
+                systemTray.ToggleWindow();
+            else
                 mainView.Activate();
 
             navigation.Navigate("Home");

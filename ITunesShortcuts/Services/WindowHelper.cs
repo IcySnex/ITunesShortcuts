@@ -125,6 +125,7 @@ public class WindowHelper
         if (isVisible)
         {
             window.Show(true);
+            Win32.SetForegroundWindow(HWnd);
             return;
         }
 

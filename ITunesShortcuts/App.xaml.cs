@@ -48,6 +48,7 @@ public partial class App : Application
                 services.AddSingleton<WindowHelper>();
                 services.AddSingleton<JsonConverter>();
                 services.AddSingleton<Navigation>();
+                services.AddSingleton<Notifications>();
                 services.AddSingleton<ITunesHelper>();
                 services.AddSingleton<SystemTray>();
                 services.AddSingleton<ShortcutManager>();

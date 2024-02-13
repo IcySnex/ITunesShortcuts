@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿#pragma warning disable CA2211 // Non-constant fields should not be visible
+#pragma warning disable CA1401 // P/Invokes should not be visible
+
+using System.Runtime.InteropServices;
 
 namespace ITunesShortcuts.Helpers;
 
@@ -99,27 +102,30 @@ public abstract class Win32
     public static extern string BrandingFormatString(
         string format);
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr SetWindowsHookEx(
         int id,
         HookProc lpfn,
         IntPtr hMod,
         uint dwThreadId);
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern bool UnhookWindowsHookEx(
         IntPtr hhk);
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr CallNextHookEx(
         IntPtr hhk,
         int nCode,
         IntPtr wParam,
         IntPtr lParam);
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern IntPtr GetModuleHandle(
         string lpModuleName);
+
+    [DllImport("user32.dll")]
+    public static extern bool SetForegroundWindow(IntPtr hWnd);
 
 
 
