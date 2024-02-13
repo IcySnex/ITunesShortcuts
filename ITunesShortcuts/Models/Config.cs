@@ -31,4 +31,7 @@ public partial class Config : ObservableObject
         shortcut.Description = "Run iTunesShortcuts at Windows startup";
         shortcut.Save();
     }
+
+    [ObservableProperty]
+    bool launchMinimized = false;
 }

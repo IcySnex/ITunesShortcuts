@@ -57,12 +57,12 @@
             <Rectangle Style="{StaticResource DividerStyle}" />
 
             <ContentControl
-                hlp:Attributes.Description="Run iTunesShortcuts at Windows startup"
-                hlp:Attributes.Glyph="&#xe81c;"
-                hlp:Attributes.Title="Auto Start"
+                hlp:Attributes.Description="When launching automatically minimize to tray"
+                hlp:Attributes.Glyph="&#xed1a;"
+                hlp:Attributes.Title="Launch minimized"
                 Style="{StaticResource SettingsCard}">
 
-                <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.IsAutoStartEnabled, Mode=TwoWay}" />
+                <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.LaunchMinimized, Mode=TwoWay}" />
             </ContentControl>
         </StackPanel>
 
