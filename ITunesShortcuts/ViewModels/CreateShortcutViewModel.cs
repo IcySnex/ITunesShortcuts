@@ -28,7 +28,8 @@ public partial class CreateShortcutViewModel : ObservableObject
     public bool IsValid =>
         !string.IsNullOrWhiteSpace(Name) &&
         SelectedAction != 0 &&
-        Key is not null;
+        Key is not null &&
+        !keyboardListener.GetKeys().Any(key => key.Key == Key);
 
 
     [ObservableProperty]

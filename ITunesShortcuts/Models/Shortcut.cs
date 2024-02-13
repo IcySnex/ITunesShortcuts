@@ -7,7 +7,7 @@ public class Shortcut
     public Shortcut(
         string name,
         Key key,
-        HashSet<Modifier> modifiers,
+        HashSet<Modifier>? modifiers,
         string action,
         string parameter)
     {
@@ -22,7 +22,7 @@ public class Shortcut
 
     public Key Key { get; }
 
-    public HashSet<Modifier> Modifiers { get; }
+    public HashSet<Modifier>? Modifiers { get; }
 
     public string Action { get; }
 

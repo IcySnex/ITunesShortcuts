@@ -26,7 +26,7 @@ public class SystemTray
         this.navigation = navigation;
 
         toggleShortcutsItem = new("Disable all shortcuts", (_, _) => ToggleShortcuts());
-        toogleWindowItem = new("Hide window", (_, _) => ToogleWindow());
+        toogleWindowItem = new("Hide window", (_, _) => ToggleWindow());
         settingsItem = new("Settings", (_, _) => Settings());
         exitItem = new("Exit", (_, _) => Exit());
 
@@ -67,11 +67,11 @@ public class SystemTray
     }
 
     public void SetVisibility(
-        bool isVisiblie)
+        bool isVisible)
     {
-        icon?.UpdateVisibility(isVisiblie ? IconVisibility.Visible : IconVisibility.Hidden);
+        icon?.UpdateVisibility(isVisible ? IconVisibility.Visible : IconVisibility.Hidden);
 
-        logger.LogInformation("[SystemTray-SetVisibility] Tray Icon visibility has been set: {value}", isVisiblie);
+        logger.LogInformation("[SystemTray-SetVisibility] Tray Icon visibility has been set: {value}", isVisible);
     }
 
 
@@ -88,7 +88,7 @@ public class SystemTray
         toggleShortcutsItem.Text = "Enable all shortcuts";
     }
 
-    public void ToogleWindow()
+    public void ToggleWindow()
     {
         if (toogleWindowItem.Text == "Show window")
         {

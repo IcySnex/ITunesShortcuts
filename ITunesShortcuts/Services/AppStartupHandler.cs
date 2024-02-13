@@ -26,11 +26,13 @@ public class AppStartupHandler
             iTunesHelper.ValidateInstallation();
             iTunesHelper.ValidateCOMRegistration();
 
-            shortcutManager.Load();
-
             keyboardListener.Start();
 
             systemTray.Enable();
+            if (configuration.Value.LaunchMinimized)
+                systemTray.ToggleWindow();
+
+            shortcutManager.Load();
 
             windowHelper.SetIcon("icon.ico");
             windowHelper.SetMinSize(375, 600);
@@ -49,7 +51,8 @@ public class AppStartupHandler
 
                 logger.LogInformation("[MainView-Closed] Closed main window.");
             };
-            mainView.Activate();
+            if (!configuration.Value.LaunchMinimized)
+                mainView.Activate();
 
             navigation.Navigate("Home");
 
@@ -60,7 +63,11 @@ public class AppStartupHandler
             logger.LogError("[AppStartupHandler-.ctor] App failed to start: {error} ({message})", ex.Message, ex.InnerException?.Message ?? "There was an unexcepted error.");
             _ = Win32.MessageBox(IntPtr.Zero, $"Error: {ex.Message}\n{ex.InnerException?.Message ?? "There was an unexcepted error."}", $"Error", Win32.MB_OK | Win32.MB_ICONERROR);
 
+#if DEBUG
+            throw;
+#else
             Process.GetCurrentProcess().Kill();
+#endif
         }
     }
 }
