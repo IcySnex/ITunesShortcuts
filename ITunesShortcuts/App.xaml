@@ -43,7 +43,6 @@
                 <Setter Property="Padding" Value="8" />
                 <Setter Property="Height" Value="48" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="IsTabStop" Value="False" />
             </Style>
 
 
