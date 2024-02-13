@@ -54,7 +54,7 @@
                         VerticalAlignment="Center"
                         Foreground="{StaticResource TextFillColorTertiaryBrush}"
                         TextTrimming="CharacterEllipsis">
-                        <Run Text="{x:Bind Action}" /><Run Text=":" />
+                        <Run Text="{x:Bind Action, Converter={StaticResource ShortcutActionToStringConverter}}" /><Run Text=":" />
                         <Run Foreground="{StaticResource TextFillColorDisabledBrush}" Text="{x:Bind Parameter}" />
                     </TextBlock>
 
@@ -145,7 +145,7 @@
                     VerticalAlignment="Center"
                     Foreground="{StaticResource TextFillColorTertiaryBrush}"
                     TextTrimming="CharacterEllipsis">
-                    <Run Text="{x:Bind Action}" /><Run Text=":" />
+                    <Run Text="{x:Bind Action, Converter={StaticResource ShortcutActionToStringConverter}}" /><Run Text=":" />
                     <Run Foreground="{StaticResource TextFillColorDisabledBrush}" Text="{x:Bind Parameter}" />
                 </TextBlock>
 

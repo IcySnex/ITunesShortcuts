@@ -14,4 +14,15 @@ public static class Extensions
         key == Key.LControl || key == Key.RControl ||
         key == Key.LShift || key == Key.RShift ||
         key == Key.LWin || key == Key.RWin;
+
+
+    public static IEnumerable<T> AddFirst<T>(
+        this IEnumerable<T> source,
+        T element)
+    {
+        LinkedList<T> linkedList = new(source);
+        linkedList.AddFirst(element);
+
+        return linkedList;
+    }
 }

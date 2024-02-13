@@ -8,7 +8,7 @@ public class Shortcut
         string name,
         Key key,
         HashSet<Modifier>? modifiers,
-        string action,
+        ShortcutAction action,
         string parameter)
     {
         this.Name = name;
@@ -24,7 +24,7 @@ public class Shortcut
 
     public HashSet<Modifier>? Modifiers { get; }
 
-    public string Action { get; }
+    public ShortcutAction Action { get; }
 
     public string Parameter { get; }
 }

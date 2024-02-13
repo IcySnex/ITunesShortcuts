@@ -1,9 +1,13 @@
-﻿using ITunesShortcuts.Enums;
+﻿using iTunesLib;
+using ITunesShortcuts.Enums;
 using ITunesShortcuts.EventArgs;
 using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Specialized;
+using Microsoft.Windows.AppNotifications.Builder;
+using System.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ITunesShortcuts.Services;
 
@@ -11,6 +15,8 @@ public class ShortcutManager
 {
     readonly ILogger<ShortcutManager> logger;
     readonly JsonConverter converter;
+    readonly Notifications notifications;
+    readonly ITunesHelper iTunesHelper;
     readonly KeyboardListener keyboardListener;
 
     public ObservableRangeCollection<Shortcut> Shortcuts { get; } = new();
@@ -18,10 +24,14 @@ public class ShortcutManager
     public ShortcutManager(
         ILogger<ShortcutManager> logger,
         JsonConverter converter,
+        Notifications notifications,
+        ITunesHelper iTunesHelper,
         KeyboardListener keyboardListener)
     {
         this.logger = logger;
         this.converter = converter;
+        this.notifications = notifications;
+        this.iTunesHelper = iTunesHelper;
         this.keyboardListener = keyboardListener;
 
         Shortcuts.CollectionChanged += OnShortcutsCollectionChanged;
@@ -32,9 +42,47 @@ public class ShortcutManager
 
     Action<KeyPressedEventArgs> CreateAction(
         Shortcut shortcut) =>
-        args =>
+        shortcut.Action switch
         {
-            logger.LogInformation("[ShortcutManager-CreateAction] Shortcut pressed: {key}", args.Key);
+            ShortcutAction.Get => args =>
+            {
+                IITTrack? track = iTunesHelper.GetCurrentTrack();
+
+                string artworkLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tempArtwork.jpg");
+                track?.Artwork.OfType<IITArtwork>().FirstOrDefault()?.SaveArtworkToFile(artworkLocation);
+
+                AppNotificationBuilder? builder = track is null ?
+                    new AppNotificationBuilder().AddText("No track is currently playing in iTunes.") :
+                    new AppNotificationBuilder()
+                        .AddText("Get current track", new AppNotificationTextProperties().SetMaxLines(1))
+                        .AddText($"{track.Name}: {track.PlayedCount} times played\n" +
+                            $"{track.Artist} - {track.Album}")
+                        .SetAppLogoOverride(new($"file:///{artworkLocation}"));
+
+                Action<string> onButtonClick = buttonContent =>
+                {
+                    switch (buttonContent)
+                    {
+                        case "◀":
+                            iTunesHelper.BackTrack();
+                            break;
+                        case "❚❚":
+                            iTunesHelper.PlayPause();
+                            break;
+                        case "▶":
+                            iTunesHelper.NextTrack();
+                            break;
+                    }
+                };
+
+                notifications.SendWithButton(new[] { "◀", "❚❚", "▶" }, onButtonClick, builder);
+
+                logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Get", args.Key);
+            },
+            _ => args =>
+            {
+                logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Action type invalid", args.Key);
+            }
         };
 
 

@@ -114,11 +114,9 @@ public class Notifications
 
 
     public void Send(
-        string text,
-        AppNotificationBuilder? builder = null)
+        AppNotificationBuilder builder)
     {
-        AppNotification notification = (builder ?? new())
-            .AddText(text)
+        AppNotification notification = builder
             .AddArgument(Action, ViewAction)
             .BuildNotification();
 
@@ -127,7 +125,6 @@ public class Notifications
     }
 
     public void SendWithButton(
-        string text,
         string[] buttons,
         Action<string> buttonAction,
         AppNotificationBuilder? builder = null)
@@ -145,11 +142,10 @@ public class Notifications
                 .AddArgument(Content, button));
         }
 
-        Send(text, builder);
+        Send(builder);
     }
 
     public void SendWithComboBox(
-        string text,
         string[] items,
         Action<string?> selectAction,
         string submitButtonText = "Okay",
@@ -170,6 +166,6 @@ public class Notifications
                 .AddArgument(Action, ComboBoxAction)
                 .AddArgument(Group, group));
 
-        Send(text, builder);
+        Send(builder);
     }
 }

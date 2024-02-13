@@ -1,9 +1,10 @@
-﻿using ITunesShortcuts.Helpers;
+﻿using iTunesLib;
+using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System.Diagnostics;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
 namespace ITunesShortcuts.Services;
 
@@ -20,7 +21,9 @@ public class ITunesHelper
     }
 
 
+    iTunesApp iTunes = default!;
     string? registrySubKey = null;
+
 
     public ITunesInfo? GetInfo()
     {
@@ -85,6 +88,13 @@ public class ITunesHelper
         }
     }
 
+    public bool IsInitialized()
+    {
+        logger.LogInformation("[ITunesHelper-IsInitialized] Checking iTunes initialization.");
+
+        return iTunes is not null;
+    }
+
 
     public void ValidateInstallation()
     {
@@ -114,5 +124,55 @@ public class ITunesHelper
             Process.GetCurrentProcess().Kill();
             return;
         }
+    }
+
+    public void ValidateInitialization()
+    {
+        if (IsInitialized())
+            return;
+
+        iTunes = new();
+        logger.LogInformation("[ITunesHelper-ValidateInitialization] iTunes was initialized and is ready.");
+    }
+
+
+    public IITFileOrCDTrack? GetCurrentTrack()
+    {
+        ValidateInitialization();
+
+        if (iTunes.CurrentTrack is not IITFileOrCDTrack track)
+            return null;
+
+        logger.LogInformation("[ITunesHelper-GetCurrentTrack] Got current playing track.");
+        return track;
+    }
+
+    public void PlayPause()
+    {
+        ValidateInitialization();
+
+        iTunes.PlayPause();
+    }
+    public void BackTrack()
+    {
+        ValidateInitialization();
+
+        iTunes.BackTrack();
+    }
+    public void NextTrack()
+    {
+        ValidateInitialization();
+
+        iTunes.NextTrack();
+    }
+
+    public IEnumerable<IITUserPlaylist> GetAllPlaylists()
+    {
+        ValidateInitialization();
+
+        IEnumerable<IITUserPlaylist> playlists = iTunes.LibrarySource.Playlists.OfType<IITUserPlaylist>().Where(playlist => playlist.SpecialKind == ITUserPlaylistSpecialKind.ITUserPlaylistSpecialKindNone && !playlist.Smart);
+
+        logger.LogInformation("[ITunesHelper-GetAllPlaylists] Got all library playlists.");
+        return playlists;
     }
 }

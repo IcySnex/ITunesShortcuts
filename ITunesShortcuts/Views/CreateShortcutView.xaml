@@ -24,11 +24,14 @@
             <ContentControl hlp:Attributes.Title="Action" Style="{StaticResource WithHeader}">
                 <ComboBox
                     HorizontalAlignment="Stretch"
+                    ItemsSource="{x:Bind viewModel.Actions}"
                     PlaceholderText="Shortcut Action"
-                    SelectedIndex="{x:Bind viewModel.SelectedAction, Mode=TwoWay}">
-                    <ComboBoxItem Content="None" />
-                    <ComboBoxItem Content="Add to Playlist" />
-                    <ComboBoxItem Content="Rate" />
+                    SelectedItem="{x:Bind viewModel.Action, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="enm:ShortcutAction">
+                            <TextBlock Text="{x:Bind Converter={StaticResource ShortcutActionToStringConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </ContentControl>
 
@@ -38,10 +41,9 @@
                 Style="{StaticResource WithHeader}">
                 <ComboBox
                     HorizontalAlignment="Stretch"
+                    ItemsSource="{x:Bind viewModel.Parameters, Mode=OneWay}"
                     PlaceholderText="Parameter"
-                    SelectedIndex="{x:Bind viewModel.SelectedParameter, Mode=TwoWay}">
-                    <ComboBoxItem Content="None" />
-                </ComboBox>
+                    SelectedIndex="{x:Bind viewModel.SelectedParameter, Mode=TwoWay}" />
             </ContentControl>
         </Grid>
 

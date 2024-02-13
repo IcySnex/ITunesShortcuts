@@ -12,15 +12,18 @@ namespace ITunesShortcuts.Services;
 public class KeyboardListener
 {
     readonly ILogger<KeyboardListener> logger;
+    readonly WindowHelper windowHelper;
 
     readonly Dictionary<Key, HashSet<Modifier>?> keysToListen = new();
     readonly Dictionary<Key, Action<KeyPressedEventArgs>> keySubscriptions = new();
     readonly HashSet<Key> pressedKeys = new();
 
     public KeyboardListener(
-        ILogger<KeyboardListener> logger)
+        ILogger<KeyboardListener> logger,
+        WindowHelper windowHelper)
     {
         this.logger = logger;
+        this.windowHelper = windowHelper;
 
         logger.LogInformation("[KeyboardListener-.ctor] KeyboardListener has been initialized.");
     }
@@ -171,7 +174,7 @@ public class KeyboardListener
         KeyPressed?.Invoke(this, args);
 
         if (keySubscriptions.TryGetValue(args.Key, out Action<KeyPressedEventArgs>? action))
-            action.Invoke(args);
+            windowHelper.EnqueDispatcher(() => action.Invoke(args));
 
     }
 

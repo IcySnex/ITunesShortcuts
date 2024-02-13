@@ -17,6 +17,7 @@
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
             <conv:KeyToStringConverter x:Key="KeyToStringConverter" />
+            <conv:ShortcutActionToStringConverter x:Key="ShortcutActionToStringConverter" />
 
 
             <!--  Styles  -->

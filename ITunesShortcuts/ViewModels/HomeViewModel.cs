@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ITunesShortcuts.Enums;
 using ITunesShortcuts.Models;
 using ITunesShortcuts.Services;
 using ITunesShortcuts.Views;
@@ -56,7 +57,12 @@ public partial class HomeViewModel : ObservableObject
         if (await windowHelper.AlertAsync(dialog) != ContentDialogResult.Primary)
             return;
 
-        Shortcut shortcut = new(viewModel.Name, viewModel.Key!.Value, viewModel.Modifiers, "", "");
+        Shortcut shortcut = new(
+            viewModel.Name,
+            viewModel.Key!.Value,
+            viewModel.Modifiers,
+            viewModel.Action,
+            viewModel.Parameters[viewModel.SelectedParameter]);
 
         ShortcutManager.Shortcuts.Add(shortcut);
         ShortcutManager.Save();
