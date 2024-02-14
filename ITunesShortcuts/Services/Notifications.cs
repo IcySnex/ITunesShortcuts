@@ -1,30 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using Windows.Foundation;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ITunesShortcuts.Services;
 
 public class Notifications
 {
-    public static AppNotificationBuilder CreateBuilder(
-        params string[] lines)
-    {
-        AppNotificationBuilder builder = new AppNotificationBuilder()
-            .AddText(string.Join('\n', lines));
-
-        return builder;
-    }
-
-
     public const string Action = "action";
     public const string Group = "group";
     public const string Content = "content";
+    public const string ComboBoxToPage = "comboBoxToPage";
 
     public const string ViewAction = "view";
     public const string ButtonAction = "button";
     public const string ComboBoxAction = "comboBox";
+    public const string ComboBoxToPageAction = "comboBoxToPage";
+
+    public const int ItemsPerComboBoxPage = 5;
 
 
     readonly ILogger<Notifications> logger;
@@ -32,6 +27,8 @@ public class Notifications
 
     readonly AppNotificationManager notificationManager = AppNotificationManager.Default;
     readonly Dictionary<string, Action<string>> groupActionMapping = new();
+    readonly Dictionary<string, string[]> groupItemsMapping = new();
+    readonly Dictionary<string, (string text, string? appLogo)> groupNotificationInfoMapping = new();
 
     public Notifications(
         ILogger<Notifications> logger,
@@ -63,6 +60,9 @@ public class Notifications
         groupActionMapping.Clear();
     }
 
+    public IAsyncAction ClearAsync() =>
+        notificationManager.RemoveAllAsync();
+
 
     public void Handle(
         AppNotificationActivatedEventArgs args) =>
@@ -85,6 +85,9 @@ public class Notifications
                     break;
                 case ComboBoxAction:
                     HandleComboBoxAction(args.Arguments, args.UserInput);
+                    break;
+                case ComboBoxToPage:
+                    HandleComboBoxToPageAction(args.Arguments);
                     break;
             }
 
@@ -120,10 +123,25 @@ public class Notifications
 
         action.Invoke(input);
         groupActionMapping.Remove(group);
+        groupItemsMapping.Remove(group);
+        groupNotificationInfoMapping.Remove(group);
+    }
+
+    void HandleComboBoxToPageAction(
+        IDictionary<string, string> arguments)
+    {
+        if (!arguments.TryGetValue(Group, out string? group) || group is null ||                                  // if no group was set
+            !arguments.TryGetValue(ComboBoxToPage, out string? pageStr) || !int.TryParse(pageStr, out int page))  // if no page number was provided
+        {
+            logger.LogError("[Notifications-HandleComboBoxToPageAction] Notification could not be handled: group key, page number was not found.");
+            return;
+        }
+
+        SendWithComboBox(group, page);
     }
 
 
-    public void Send(
+    public AppNotification Send(
         AppNotificationBuilder builder)
     {
         AppNotification notification = builder
@@ -131,15 +149,34 @@ public class Notifications
             .BuildNotification();
 
         notificationManager.Show(notification);
+
         logger.LogInformation("[Notifications-Send] Notification was sent.");
+        return notification;
     }
 
-    public void SendWithButton(
+    public AppNotification Send(
+        string text,
+        string? appLogo = null)
+    {
+        AppNotificationBuilder builder = new AppNotificationBuilder()
+            .AddText(text);
+        if (appLogo is not null)
+            builder.SetAppLogoOverride(new(appLogo));
+
+        return Send(builder);
+    }
+
+
+    public AppNotification SendWithButton(
         string[] buttons,
         Action<string> buttonAction,
-        AppNotificationBuilder? builder = null)
+        string text,
+        string? appLogo = null)
     {
-        builder ??= new();
+        AppNotificationBuilder builder = new AppNotificationBuilder()
+            .AddText(text);
+        if (appLogo is not null)
+            builder.SetAppLogoOverride(new(appLogo));
 
         string group = Guid.NewGuid().ToString();
         groupActionMapping.Add(group, buttonAction);
@@ -152,30 +189,67 @@ public class Notifications
                 .AddArgument(Content, button));
         }
 
-        Send(builder);
+        return Send(builder);
     }
 
-    public void SendWithComboBox(
+
+    public AppNotification SendWithComboBox(
         string[] items,
         Action<string?> selectAction,
-        string submitButtonText = "Okay",
-        AppNotificationBuilder? builder = null)
+        string text,
+        string? appLogo = null,
+        int page = 1)
     {
-        builder ??= new();
-
         string group = Guid.NewGuid().ToString();
         groupActionMapping.Add(group, selectAction);
+        groupItemsMapping.Add(group, items);
+        groupNotificationInfoMapping.Add(group, (text, appLogo));
+
+        return SendWithComboBox(group, page)!;
+    }
+
+    public AppNotification? SendWithComboBox(
+        string group,
+        int page)
+    {
+        if (!groupItemsMapping.TryGetValue(group, out string[]? items) || items is null ||
+            !groupNotificationInfoMapping.TryGetValue(group, out (string text, string? appLogo) notificationInfo))
+        {
+            logger.LogError("[Notifications-SendWithComboBox] Failed to send notification: items or notification info was not found.");
+            return null;
+        }
+
+        AppNotificationBuilder builder = new AppNotificationBuilder()
+            .AddText(notificationInfo.text);
+        if (notificationInfo.appLogo is not null)
+            builder.SetAppLogoOverride(new(notificationInfo.appLogo));
 
         AppNotificationComboBox comboBox = new(group);
-        foreach (string item in items)
+
+        int totalPages = (int)Math.Ceiling((double)items.Length / ItemsPerComboBoxPage);
+        int startIndex = (page - 1) * ItemsPerComboBoxPage;
+        int endIndex = Math.Min(page * ItemsPerComboBoxPage, items.Length);
+        for (int i = startIndex; i < endIndex; i++)
         {
+            string item = items[i];
             comboBox.AddItem(item, item);
         }
+
+        if (totalPages > 1 && page > 1)
+            builder.AddButton(new AppNotificationButton("🡐 Previous")
+                .AddArgument(Action, ComboBoxToPageAction)
+                .AddArgument(Group, group)
+                .AddArgument(ComboBoxToPage, (page - 1).ToString()));
         builder.AddComboBox(comboBox)
-            .AddButton(new AppNotificationButton(submitButtonText)
+            .AddButton(new AppNotificationButton("Okay")
                 .AddArgument(Action, ComboBoxAction)
                 .AddArgument(Group, group));
+        if (totalPages > 1 && page < totalPages)
+            builder.AddButton(new AppNotificationButton("Next 🡒")
+                .AddArgument(Action, ComboBoxToPageAction)
+                .AddArgument(Group, group)
+                .AddArgument(ComboBoxToPage, (page + 1).ToString()));
 
-        Send(builder);
+        return Send(builder);
     }
 }

@@ -27,6 +27,7 @@ public class AppStartupHandler
             iTunesHelper.ValidateCOMRegistration();
 
             notifications.Register();
+            notifications.ClearAsync().AsTask();
 
             keyboardListener.Start();
 

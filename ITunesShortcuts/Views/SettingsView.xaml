@@ -64,6 +64,17 @@
 
                 <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.LaunchMinimized, Mode=TwoWay}" />
             </ContentControl>
+
+            <Rectangle Style="{StaticResource DividerStyle}" />
+
+            <ContentControl
+                hlp:Attributes.Description="Run a debug specific command"
+                hlp:Attributes.Glyph="&#xec7a;"
+                hlp:Attributes.Title="Debug"
+                Style="{StaticResource SettingsCard}">
+
+                <Button Command="{x:Bind viewModel.DebugCommand}" Content="Execute" />
+            </ContentControl>
         </StackPanel>
 
         <StackPanel Style="{StaticResource ContainerStyle}">
