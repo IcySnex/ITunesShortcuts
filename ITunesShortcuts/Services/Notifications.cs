@@ -8,6 +8,16 @@ namespace ITunesShortcuts.Services;
 
 public class Notifications
 {
+    public static AppNotificationBuilder CreateBuilder(
+        params string[] lines)
+    {
+        AppNotificationBuilder builder = new AppNotificationBuilder()
+            .AddText(string.Join('\n', lines));
+
+        return builder;
+    }
+
+
     public const string Action = "action";
     public const string Group = "group";
     public const string Content = "content";
