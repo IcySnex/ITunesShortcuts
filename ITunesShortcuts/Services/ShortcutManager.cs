@@ -5,9 +5,6 @@ using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Specialized;
-using Microsoft.Windows.AppNotifications.Builder;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ITunesShortcuts.Services;
 
@@ -47,7 +44,7 @@ public class ShortcutManager
         IITTrack? track = iTunesHelper.GetCurrentTrack();
         if (track is null)
         {
-            notifications.Send(Notifications.CreateBuilder("No track is currently playing in iTunes."));
+            notifications.Send("No track is currently playing in iTunes.");
             logger.LogError("[ShortcutManager-GetCurrentTrackAndSaveArtwork] Failed to get current track: null");
             return null;
         }
@@ -80,6 +77,18 @@ public class ShortcutManager
                         break;
                 }
             },
+            ShortcutAction.AddToPlaylist => args =>
+            {
+                switch (shortcut.Parameter)
+                {
+                    case "Select later":
+                        AddToPlaylistAction(args);
+                        break;
+                    default:
+                        AddToPlaylistAction(args, shortcut.Parameter);
+                        break;
+                }
+            },
             _ => args => logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Action type invalid", args.Key)
         };
 
@@ -88,10 +97,6 @@ public class ShortcutManager
     {
         IITTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
-
-        AppNotificationBuilder builder = Notifications.CreateBuilder(
-                "Get current track", track.Name, $"{track.Artist} - {track.Album}")
-                .SetAppLogoOverride(new($"file:///{artworkLocation}"));
 
         void onButtonClick(string buttonContent)
         {
@@ -108,10 +113,12 @@ public class ShortcutManager
                     break;
             }
 
-            logger.LogInformation("[ShortcutManager-onButtonClick] Controlled media [{action}]: {track}", buttonContent, track.Name);
+            logger.LogInformation("[ShortcutManager-onButtonClick] Controlled media: {action}", buttonContent);
         }
 
-        notifications.SendWithButton(new[] { "◀", "❚❚", "▶" }, onButtonClick, builder);
+        notifications.SendWithButton(new[] { "◀", "❚❚", "▶" }, onButtonClick,
+            $"Get current track\n{track.Name}\n{track.Artist} - {track.Album}",
+            $"file:///{artworkLocation}");
         logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Get", args.Key);
     }
 
@@ -121,19 +128,19 @@ public class ShortcutManager
         IITTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
 
-        AppNotificationBuilder builder = Notifications.CreateBuilder(
-                "Rate current track", track.Name, $"{track.Artist} - {track.Album}")
-                .SetAppLogoOverride(new($"file:///{artworkLocation}"));
-
         void onButtonClick(string buttonContent)
         {
             int stars = int.Parse(buttonContent[0].ToString());
             track.Rating = stars * 20;
 
-            logger.LogInformation("[ShortcutManager-onButtonClick] Rated current track: [{stars}]", stars);
+            logger.LogInformation("[ShortcutManager-onButtonClick] Rated current track: {stars}", stars);
         }
 
-        notifications.SendWithButton(new[] { "1 ★", "2 ★", "3 ★", "4 ★", "5 ★" }, onButtonClick, builder);
+        notifications.SendWithButton(
+            new[] { "1 ★", "2 ★", "3 ★", "4 ★", "5 ★" },
+            onButtonClick, 
+            $"Rate current track\n{track.Name}\n{track.Artist} - {track.Album}",
+            $"file:///{artworkLocation}");
         logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Rate", args.Key);
     }
 
@@ -144,16 +151,76 @@ public class ShortcutManager
         IITTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
 
-        string info = stars == 0 ? "Reset" : $"{stars} Star{(stars != 1 ? 's' : "")}";
-        AppNotificationBuilder builder = Notifications.CreateBuilder(
-                $"Rate current track ({info})", track.Name, $"{track.Artist} - {track.Album}")
-                .SetAppLogoOverride(new($"file:///{artworkLocation}"));
-
         track.Rating = stars * 20;
 
-        notifications.Send(builder);
+        string info = stars == 0 ? "Reset" : $"{stars} Star{(stars != 1 ? 's' : "")}";
+        notifications.Send(
+            $"Rate current track ({info})\n{track.Name}\n{track.Artist} - {track.Album}",
+            $"file:///{artworkLocation}");
         logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Rate [{stars}]", args.Key, info);
     }
+
+    void AddToPlaylistAction(
+        KeyPressedEventArgs args)
+    {
+        IITTrack? track = GetCurrentTrackAndSaveArtwork();
+        if (track is null) return;
+
+        IEnumerable<IITUserPlaylist> playlists = iTunesHelper.GetAllPlaylists();
+
+        void onComboBoxSelectItem(string? item)
+        {
+            if (string.IsNullOrWhiteSpace(item))
+            {
+                notifications.Send("Failed to add current track to playlist.\nError: There was no playlist selected.");
+                return;
+            }
+
+            IITUserPlaylist? playlist = playlists.FirstOrDefault(playlist => playlist.Name == item);
+            if (playlist is null)
+            {
+                notifications.Send("Failed to add current track to playlist.\nError: The selected playlist could not be found.");
+                return;
+            }
+
+            playlist.AddTrack(track);
+
+            logger.LogInformation("[ShortcutManager-onButtonClick] Added track to playlist: {playlist}", item);
+        }
+
+        notifications.SendWithComboBox(
+            playlists.Select(playlist => playlist.Name).ToArray(),
+            onComboBoxSelectItem,
+            $"Add current track to playlist\n{track.Name}\n{track.Artist} - {track.Album}",
+            $"file:///{artworkLocation}");
+        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: AddToPlaylist", args.Key);
+    }
+
+    void AddToPlaylistAction(
+        KeyPressedEventArgs args,
+        string playlistName)
+    {
+        IITTrack? track = GetCurrentTrackAndSaveArtwork();
+        if (track is null) return;
+
+        IEnumerable<IITUserPlaylist> playlists = iTunesHelper.GetAllPlaylists();
+
+        IITUserPlaylist? playlist = playlists.FirstOrDefault(playlist => playlist.Name == playlistName);
+        if (playlist is null)
+        {
+            notifications.Send("Failed to add current track to playlist.\nError: The selected playlist could not be found.");
+            return;
+        }
+
+        playlist.AddTrack(track);
+
+        notifications.Send(
+            $"Rate current track ({playlistName}, {playlist.Tracks.Count} tracks)\n{track.Name}\n{track.Artist} - {track.Album}",
+            $"file:///{artworkLocation}");
+        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: AddToPlaylist [{playlistName}]", args.Key, playlistName);
+    }
+
+
 
 
     public void Load()
