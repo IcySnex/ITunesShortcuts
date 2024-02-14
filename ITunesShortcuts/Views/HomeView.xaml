@@ -47,13 +47,15 @@
                         Foreground="{StaticResource TextFillColorSecondaryBrush}"
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="{x:Bind Name}"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap" />
                     <TextBlock
                         Grid.Column="2"
                         Margin="0,15,0,0"
                         VerticalAlignment="Center"
                         Foreground="{StaticResource TextFillColorTertiaryBrush}"
-                        TextTrimming="CharacterEllipsis">
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap">
                         <Run Text="{x:Bind Action, Converter={StaticResource ShortcutActionToStringConverter}}" /><Run Text=":" />
                         <Run Foreground="{StaticResource TextFillColorDisabledBrush}" Text="{x:Bind Parameter}" />
                     </TextBlock>
@@ -138,13 +140,15 @@
                     Foreground="{StaticResource TextFillColorSecondaryBrush}"
                     Style="{StaticResource BodyStrongTextBlockStyle}"
                     Text="{x:Bind Name}"
-                    TextTrimming="CharacterEllipsis" />
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap" />
                 <TextBlock
                     Grid.Column="2"
                     Margin="0,15,0,0"
                     VerticalAlignment="Center"
                     Foreground="{StaticResource TextFillColorTertiaryBrush}"
-                    TextTrimming="CharacterEllipsis">
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap">
                     <Run Text="{x:Bind Action, Converter={StaticResource ShortcutActionToStringConverter}}" /><Run Text=":" />
                     <Run Foreground="{StaticResource TextFillColorDisabledBrush}" Text="{x:Bind Parameter}" />
                 </TextBlock>
