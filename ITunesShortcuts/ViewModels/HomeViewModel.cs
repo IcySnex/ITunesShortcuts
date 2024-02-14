@@ -17,6 +17,7 @@ public partial class HomeViewModel : ObservableObject
     readonly ILogger<HomeViewModel> logger;
     readonly WindowHelper windowHelper;
     readonly Navigation navigation;
+    readonly KeyboardListener keyboardListener;
 
     public ShortcutManager ShortcutManager { get; }
 
@@ -24,12 +25,14 @@ public partial class HomeViewModel : ObservableObject
         ILogger<HomeViewModel> logger,
         WindowHelper windowHelper,
         Navigation navigation,
-        ShortcutManager shortcutManager)
+        ShortcutManager shortcutManager,
+        KeyboardListener keyboardListener)
     {
         this.logger = logger;
         this.windowHelper = windowHelper;
         this.navigation = navigation;
         this.ShortcutManager = shortcutManager;
+        this.keyboardListener = keyboardListener;
 
         logger.LogInformation("[HomeViewModel-.ctor] HomeViewModel has been initialized.");
     }
@@ -57,6 +60,12 @@ public partial class HomeViewModel : ObservableObject
         if (await windowHelper.AlertAsync(dialog) != ContentDialogResult.Primary)
             return;
 
+        if (keyboardListener.GetKeys().Any(key => key.Key == viewModel.Key))
+        {
+            await windowHelper.AlertErrorAsync("The key is already used for another shortcut. Please choose another.", "Something went wrong!", "HomeViewModel-EditShortcutAsync");
+            return;
+        }
+
         Shortcut shortcut = new(
             viewModel.Name,
             viewModel.Key!.Value,
@@ -79,6 +88,50 @@ public partial class HomeViewModel : ObservableObject
         ShortcutManager.Save();
 
         logger.LogInformation("[HomeViewModel-RemoveShortcut] Shortcut has been removed: {shortcutName}", shortcut.Name);
+    }
+
+    [RelayCommand]
+    async Task EditShortcutAsync(
+        Shortcut shortcut)
+    {
+        CreateShortcutViewModel viewModel = App.Provider.GetRequiredService<CreateShortcutViewModel>();
+        viewModel.Name = shortcut.Name;
+        viewModel.Key = shortcut.Key;
+        viewModel.Modifiers = shortcut.Modifiers ?? new();
+        viewModel.Action = shortcut.Action;
+        viewModel.SelectedParameter = Array.IndexOf(viewModel.Parameters, shortcut.Parameter);
+
+        CreateShortcutView view = new(viewModel);
+        ContentDialog dialog = new()
+        {
+            Content = view,
+            Title = "Edit Shortcut",
+            CloseButtonText = "Cancel",
+            PrimaryButtonText = "Save"
+        };
+        dialog.SetBinding(ContentDialog.IsPrimaryButtonEnabledProperty, new Binding()
+        {
+            Source = viewModel,
+            Path = new PropertyPath("IsValid"),
+            Mode = BindingMode.OneWay
+        });
+
+        if (await windowHelper.AlertAsync(dialog) != ContentDialogResult.Primary)
+            return;
+
+        if (shortcut.Key != viewModel.Key && keyboardListener.GetKeys().Any(key => key.Key == viewModel.Key))
+        {
+            await windowHelper.AlertErrorAsync("The key is already used for another shortcut. Please choose another.", "Something went wrong!", "HomeViewModel-EditShortcutAsync");
+            return;
+        }
+
+        shortcut.Name = viewModel.Name;
+        shortcut.Key = viewModel.Key!.Value;
+        shortcut.Modifiers = viewModel.Modifiers;
+        shortcut.Action = viewModel.Action;
+        shortcut.Parameter = viewModel.Parameters[viewModel.SelectedParameter];
+
+        ShortcutManager.Shortcuts.ForceRefresh();
     }
 
 

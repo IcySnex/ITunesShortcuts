@@ -100,6 +100,7 @@ public class KeyboardListener
 
     public bool BlockKeys { get; set; } = false;
     public bool ListenForAllKeys { get; set; } = false;
+    public bool PauseSubscriptions { get; set; } = false;
 
     public event EventHandler<KeyPressedEventArgs>? KeyPressed;
 
@@ -172,6 +173,9 @@ public class KeyboardListener
         KeyPressedEventArgs args)
     {
         KeyPressed?.Invoke(this, args);
+
+        if (PauseSubscriptions)
+            return;
 
         if (keySubscriptions.TryGetValue(args.Key, out Action<KeyPressedEventArgs>? action))
             windowHelper.EnqueDispatcher(() => action.Invoke(args));

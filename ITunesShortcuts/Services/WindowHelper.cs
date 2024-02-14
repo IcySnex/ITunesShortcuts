@@ -248,7 +248,7 @@ public class WindowHelper
         string caller)
     {
         logger.LogError("[{caller}] {title}: {message}", caller, title, message);
-        return AlertAsync(message, "Error: " + title);
+        return AlertAsync(message, title);
     }
 
     /// <summary>

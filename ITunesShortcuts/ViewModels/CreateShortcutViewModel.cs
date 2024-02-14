@@ -31,8 +31,7 @@ public partial class CreateShortcutViewModel : ObservableObject
     public bool IsValid =>
         !string.IsNullOrWhiteSpace(Name) &&
         Action != ShortcutAction.None &&
-        Key is not null &&
-        !keyboardListener.GetKeys().Any(key => key.Key == Key);
+        Key is not null;
 
 
     [ObservableProperty]
@@ -83,7 +82,8 @@ public partial class CreateShortcutViewModel : ObservableObject
     Key? key = null;
 
 
-    public HashSet<Modifier> Modifiers { get; } = new();
+    [ObservableProperty]
+    HashSet<Modifier> modifiers = new();
 
     [RelayCommand]
     void SetModifier(
@@ -112,6 +112,7 @@ public partial class CreateShortcutViewModel : ObservableObject
             keyboardListener.KeyPressed -= OnKeyPressed;
             keyboardListener.BlockKeys = false;
             keyboardListener.ListenForAllKeys = false;
+            keyboardListener.PauseSubscriptions = false;
             return;
         }
 
@@ -119,6 +120,7 @@ public partial class CreateShortcutViewModel : ObservableObject
 
         keyboardListener.BlockKeys = true;
         keyboardListener.ListenForAllKeys = true;
+        keyboardListener.PauseSubscriptions = true;
 
         async void OnKeyPressed(object? sender, KeyPressedEventArgs args)
         {

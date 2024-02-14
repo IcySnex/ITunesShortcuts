@@ -5,6 +5,10 @@ namespace ITunesShortcuts.Helpers;
 
 public class ObservableRangeCollection<T> : ObservableCollection<T>
 {
+    public void ForceRefresh() =>
+        OnCollectionChanged(new(NotifyCollectionChangedAction.Reset));
+
+
     public void AddRange(
         IEnumerable<T> items)
     {
@@ -17,7 +21,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         }
         finally
         {
-            OnCollectionChanged(new(NotifyCollectionChangedAction.Reset));
+            ForceRefresh();
         }
     }
 
@@ -30,7 +34,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         }
         finally
         {
-            OnCollectionChanged(new(NotifyCollectionChangedAction.Reset));
+            ForceRefresh();
         }
     }
 
@@ -44,7 +48,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         }
         finally
         {
-            OnCollectionChanged(new(NotifyCollectionChangedAction.Reset));
+            ForceRefresh();
         }
     }
 
@@ -57,7 +61,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         }
         finally
         {
-            OnCollectionChanged(new(NotifyCollectionChangedAction.Reset));
+            ForceRefresh();
         }
     }
 }

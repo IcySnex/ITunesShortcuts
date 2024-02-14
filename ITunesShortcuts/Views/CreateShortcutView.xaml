@@ -95,48 +95,56 @@
                     Command="{x:Bind viewModel.SetModifierCommand}"
                     CommandParameter="{x:Bind enm:Modifier.LAlt}"
                     Content="LAlt"
+                    IsChecked="{x:Bind viewModel.Modifiers.Contains(enm:Modifier.LAlt), Mode=OneWay}"
                     Style="{StaticResource KeyButtonStyle}" />
                 <ToggleButton
                     Grid.Column="2"
                     Command="{x:Bind viewModel.SetModifierCommand}"
                     CommandParameter="{x:Bind enm:Modifier.RAlt}"
                     Content="RAlt"
+                    IsChecked="{x:Bind viewModel.Modifiers.Contains(enm:Modifier.RAlt), Mode=OneWay}"
                     Style="{StaticResource KeyButtonStyle}" />
                 <ToggleButton
                     Grid.Column="4"
                     Command="{x:Bind viewModel.SetModifierCommand}"
                     CommandParameter="{x:Bind enm:Modifier.LCtrl}"
                     Content="LCtrl"
+                    IsChecked="{x:Bind viewModel.Modifiers.Contains(enm:Modifier.LCtrl), Mode=OneWay}"
                     Style="{StaticResource KeyButtonStyle}" />
                 <ToggleButton
                     Grid.Column="6"
                     Command="{x:Bind viewModel.SetModifierCommand}"
                     CommandParameter="{x:Bind enm:Modifier.RCtrl}"
                     Content="RCtrl"
+                    IsChecked="{x:Bind viewModel.Modifiers.Contains(enm:Modifier.RCtrl), Mode=OneWay}"
                     Style="{StaticResource KeyButtonStyle}" />
                 <ToggleButton
                     Grid.Column="8"
                     Command="{x:Bind viewModel.SetModifierCommand}"
                     CommandParameter="{x:Bind enm:Modifier.LShift}"
                     Content="LShift"
+                    IsChecked="{x:Bind viewModel.Modifiers.Contains(enm:Modifier.LShift), Mode=OneWay}"
                     Style="{StaticResource KeyButtonStyle}" />
                 <ToggleButton
                     Grid.Column="10"
                     Command="{x:Bind viewModel.SetModifierCommand}"
                     CommandParameter="{x:Bind enm:Modifier.RShift}"
                     Content="RShift"
+                    IsChecked="{x:Bind viewModel.Modifiers.Contains(enm:Modifier.RShift), Mode=OneWay}"
                     Style="{StaticResource KeyButtonStyle}" />
                 <ToggleButton
                     Grid.Column="12"
                     Command="{x:Bind viewModel.SetModifierCommand}"
                     CommandParameter="{x:Bind enm:Modifier.LWin}"
                     Content="LWin"
+                    IsChecked="{x:Bind viewModel.Modifiers.Contains(enm:Modifier.LWin), Mode=OneWay}"
                     Style="{StaticResource KeyButtonStyle}" />
                 <ToggleButton
                     Grid.Column="14"
                     Command="{x:Bind viewModel.SetModifierCommand}"
                     CommandParameter="{x:Bind enm:Modifier.RWin}"
                     Content="RWin"
+                    IsChecked="{x:Bind viewModel.Modifiers.Contains(enm:Modifier.RWin), Mode=OneWay}"
                     Style="{StaticResource KeyButtonStyle}" />
             </Grid>
         </ContentControl>

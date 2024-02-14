@@ -63,7 +63,9 @@
                     <Button
                         Grid.Column="6"
                         Padding="8"
-                        HorizontalAlignment="Right">
+                        HorizontalAlignment="Right"
+                        Command="{Binding DataContext.EditShortcutCommand, ElementName=RootPage}"
+                        CommandParameter="{x:Bind}">
                         <StackPanel
                             Grid.Column="4"
                             Orientation="Horizontal"
@@ -156,7 +158,9 @@
                 <Button
                     Grid.Column="6"
                     Padding="8"
-                    HorizontalAlignment="Right">
+                    HorizontalAlignment="Right"
+                    Command="{Binding DataContext.EditShortcutCommand, ElementName=RootPage}"
+                    CommandParameter="{x:Bind}">
                     <StackPanel
                         Grid.Column="4"
                         Orientation="Horizontal"

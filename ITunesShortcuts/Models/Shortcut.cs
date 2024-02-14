@@ -18,13 +18,13 @@ public class Shortcut
         this.Parameter = parameter;
     }
 
-    public string Name { get; }
+    public string Name { get; set; }
 
-    public Key Key { get; }
+    public Key Key { get; set; }
 
-    public HashSet<Modifier>? Modifiers { get; }
+    public HashSet<Modifier>? Modifiers { get; set; }
 
-    public ShortcutAction Action { get; }
+    public ShortcutAction Action { get; set; }
 
-    public string Parameter { get; }
+    public string Parameter { get; set; }
 }
