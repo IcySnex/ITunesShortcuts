@@ -55,7 +55,7 @@ public partial class CreateShortcutViewModel : ObservableObject
                 Parameters = new[] { "None" };
                 break;
             case ShortcutAction.Rate:
-                Parameters = new[] { "Select later", "1 Star", "2 Stars", "3 Stars", "4 Stars", "5 Stars" };
+                Parameters = new[] { "Select later", "Reset", "1 Star", "2 Stars", "3 Stars", "4 Stars", "5 Stars" };
                 break;
             case ShortcutAction.AddToPlaylist:
                 IEnumerable<string> playlists = iTunesHelper.GetAllPlaylists().Select(playlist => playlist.Name);

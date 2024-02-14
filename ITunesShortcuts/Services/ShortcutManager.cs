@@ -66,10 +66,19 @@ public class ShortcutManager
             ShortcutAction.Get => GetAction,
             ShortcutAction.Rate => args =>
             {
-                if (shortcut.Parameter == "Select later")
-                    RateAction(args);
-                else
-                    RateAction(args, int.Parse(shortcut.Parameter[0].ToString()));
+                switch (shortcut.Parameter)
+                {
+                    case "Select later":
+                        RateAction(args);
+                        break;
+                    case "Reset":
+                        RateAction(args, 0);
+                        break;
+                    default:
+                        int stars = int.Parse(shortcut.Parameter[0].ToString());
+                        RateAction(args, stars);
+                        break;
+                }
             },
             _ => args => logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Action type invalid", args.Key)
         };
@@ -121,7 +130,7 @@ public class ShortcutManager
             int stars = int.Parse(buttonContent[0].ToString());
             track.Rating = stars * 20;
 
-            logger.LogInformation("[ShortcutManager-onButtonClick] Rated current track [{stars}]: {track}", stars, track.Name);
+            logger.LogInformation("[ShortcutManager-onButtonClick] Rated current track: [{stars}]", stars);
         }
 
         notifications.SendWithButton(new[] { "1 ★", "2 ★", "3 ★", "4 ★", "5 ★" }, onButtonClick, builder);
@@ -135,14 +144,15 @@ public class ShortcutManager
         IITTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
 
+        string info = stars == 0 ? "Reset" : $"{stars} Star{(stars != 1 ? 's' : "")}";
         AppNotificationBuilder builder = Notifications.CreateBuilder(
-                $"Rate current track ({stars} Star{(stars != 1 ? 's' : "")})", track.Name, $"{track.Artist} - {track.Album}")
+                $"Rate current track ({info})", track.Name, $"{track.Artist} - {track.Album}")
                 .SetAppLogoOverride(new($"file:///{artworkLocation}"));
 
         track.Rating = stars * 20;
 
         notifications.Send(builder);
-        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Rate [{stars}]", args.Key, stars);
+        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Rate [{stars}]", args.Key, info);
     }
 
 
