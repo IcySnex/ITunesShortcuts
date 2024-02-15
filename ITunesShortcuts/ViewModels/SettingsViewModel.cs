@@ -9,6 +9,7 @@ namespace ITunesShortcuts.ViewModels;
 public partial class SettingsViewModel
 {
     readonly ILogger<SettingsViewModel> logger;
+    readonly WindowHelper windowHelper;
     readonly Navigation navigation;
     readonly Notifications notifications;
 
@@ -18,11 +19,13 @@ public partial class SettingsViewModel
     public SettingsViewModel(
         ILogger<SettingsViewModel> logger,
         IOptions<Config> configuration,
+        WindowHelper windowHelper,
         Navigation navigation,
         Notifications notifications,
         ITunesHelper iTunesHelper)
     {
         this.logger = logger;
+        this.windowHelper = windowHelper;
         this.navigation = navigation;
         this.notifications = notifications;
         this.Configuration = configuration.Value;
@@ -36,6 +39,11 @@ public partial class SettingsViewModel
     [RelayCommand]
     void GoBack() =>
         navigation.GoBack();
+
+
+    [RelayCommand]
+    void Logger() =>
+        windowHelper.CreateLoggerView();
 
 
     [RelayCommand]

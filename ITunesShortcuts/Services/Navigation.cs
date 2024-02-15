@@ -32,6 +32,7 @@ public class Navigation
         }
 
         contentFrame.Navigate(pageType, parameter);
+        logger.LogInformation("[Navigation-Navigate] Navigated to page: {page}", page);
     }
 
     public void GoBack()
@@ -43,6 +44,7 @@ public class Navigation
         }
 
         contentFrame.GoBack();
+        logger.LogInformation("[Navigation-GoBack] Navigated one page back.");
     }
     public void GoForward()
     {
@@ -52,5 +54,6 @@ public class Navigation
             return;
         }
         contentFrame.GoForward();
+        logger.LogInformation("[Navigation-GoForward] Navigated one page forward.");
     }
 }

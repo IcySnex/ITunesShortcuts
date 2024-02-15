@@ -68,6 +68,17 @@
             <Rectangle Style="{StaticResource DividerStyle}" />
 
             <ContentControl
+                hlp:Attributes.Description="Creates and shows a new lgoger window"
+                hlp:Attributes.Glyph="&#xe7bc;"
+                hlp:Attributes.Title="Logger"
+                Style="{StaticResource SettingsCard}">
+
+                <Button Command="{x:Bind viewModel.LoggerCommand}" Content="Show" />
+            </ContentControl>
+
+            <Rectangle Style="{StaticResource DividerStyle}" />
+
+            <ContentControl
                 hlp:Attributes.Description="Run a debug specific command"
                 hlp:Attributes.Glyph="&#xec7a;"
                 hlp:Attributes.Title="Debug"
