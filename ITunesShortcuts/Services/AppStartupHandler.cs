@@ -46,6 +46,7 @@ public class AppStartupHandler
                 systemTray.Disable();
 
                 windowHelper.LoggerView?.Close();
+                windowHelper.LyricsView?.Close();
 
                 string config = converter.ToString(configuration.Value);
                 File.WriteAllText("configuration.json", config);

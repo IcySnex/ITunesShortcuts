@@ -1,4 +1,5 @@
-﻿using ITunesShortcuts.Views;
+﻿using iTunesLib;
+using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Controls;
@@ -56,6 +57,7 @@ public class WindowHelper
     /// </summary>
     public readonly IntPtr HWnd;
 
+
     /// <summary>
     /// Active logger window (null if none is active)
     /// </summary>
@@ -84,10 +86,48 @@ public class WindowHelper
             LoggerView = null;
         };
 
-        SetSize(LoggerView, 700, 400);
+        WindowId id = Win32Interop.GetWindowIdFromWindow(WindowNative.GetWindowHandle(LoggerView));
+        AppWindow window = AppWindow.GetFromWindowId(id);
+
+        window.Resize(new(700, 400));
+
         LoggerView.Activate();
 
         logger.LogInformation("[WindowHelper-CreateLoggerView] Created new LoggerView and hooked handler");
+    }
+
+
+    public LyricsView? LyricsView = null;
+
+    public void CreateLyricsView(
+        IITFileOrCDTrack track,
+        string artworkLocation)
+    {
+        LyricsView?.Close();
+
+        LyricsView = new(track, artworkLocation);
+        LyricsView.Closed += (s, e) =>
+        {
+            LyricsView = null;
+        };
+
+        WindowId id = Win32Interop.GetWindowIdFromWindow(WindowNative.GetWindowHandle(LyricsView));
+        DisplayArea display = DisplayArea.GetFromWindowId(id, DisplayAreaFallback.Nearest);
+
+        AppWindow window = AppWindow.GetFromWindowId(id);
+        window.SetIcon("icon.ico");
+        window.Resize(new(500, 700));
+        window.Move(new(display.WorkArea.Width - 512, display.WorkArea.Height - 712));
+
+        OverlappedPresenter presenter = (OverlappedPresenter)window.Presenter;
+        presenter.SetBorderAndTitleBar(true, false);
+        presenter.IsResizable = false;
+        presenter.IsMaximizable = false;
+        presenter.IsAlwaysOnTop = true;
+
+        LyricsView.Activate();
+
+        logger.LogInformation("[WindowHelper-CreateLyricsView] Created new LyricsView and hooked handler");
     }
 
 
@@ -177,25 +217,7 @@ public class WindowHelper
 
         logger.LogInformation("[WindowHelper-SetSize] Set window size [{width}x{height}]", width, height);
     }
-    /// <summary>
-    /// Sets the size of the given window
-    /// </summary>
-    /// <param name="externalWindow">The window to set the size to</param>
-    /// <param name="width">The width of the new size</param>
-    /// <param name="height">The height of the new size</param>
-    public void SetSize(
-        Window externalWindow,
-        int width,
-        int height)
-    {
-        IntPtr hWnd = WindowNative.GetWindowHandle(externalWindow);
-        AppWindow window = AppWindow.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(hWnd));
-
-        window.Resize(new(width, height));
-
-        logger.LogInformation("Set external window size [{width}x{height}]", width, height);
-    }
-
+   
 
     /// <summary>
     /// Dispalys a ContentDialog

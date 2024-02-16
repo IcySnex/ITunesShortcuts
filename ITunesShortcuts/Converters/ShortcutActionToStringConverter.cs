@@ -12,7 +12,7 @@ public class ShortcutActionToStringConverter : IValueConverter
              ShortcutAction.Get => "Get",
              ShortcutAction.Rate => "Rate",
              ShortcutAction.AddToPlaylist => "Add to Playlist",
-             ShortcutAction.SetHeart => "Set Heart",
+             ShortcutAction.ViewLyrics => "View Lyrics",
              _ => "N/A"
          } : "N/A";
 

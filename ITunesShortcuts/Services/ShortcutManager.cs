@@ -11,6 +11,7 @@ namespace ITunesShortcuts.Services;
 public class ShortcutManager
 {
     readonly ILogger<ShortcutManager> logger;
+    readonly WindowHelper windowHelper;
     readonly JsonConverter converter;
     readonly Notifications notifications;
     readonly ITunesHelper iTunesHelper;
@@ -20,12 +21,14 @@ public class ShortcutManager
 
     public ShortcutManager(
         ILogger<ShortcutManager> logger,
+        WindowHelper windowHelper,
         JsonConverter converter,
         Notifications notifications,
         ITunesHelper iTunesHelper,
         KeyboardListener keyboardListener)
     {
         this.logger = logger;
+        this.windowHelper = windowHelper;
         this.converter = converter;
         this.notifications = notifications;
         this.iTunesHelper = iTunesHelper;
@@ -39,9 +42,9 @@ public class ShortcutManager
 
     readonly string artworkLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tempArtwork.jpg");
 
-    IITTrack? GetCurrentTrackAndSaveArtwork()
+    IITFileOrCDTrack? GetCurrentTrackAndSaveArtwork()
     {
-        IITTrack? track = iTunesHelper.GetCurrentTrack();
+        IITFileOrCDTrack? track = iTunesHelper.GetCurrentTrack();
         if (track is null)
         {
             notifications.Send("No track is currently playing in iTunes.");
@@ -89,13 +92,14 @@ public class ShortcutManager
                         break;
                 }
             },
+            ShortcutAction.ViewLyrics => ViewLyrics,
             _ => args => logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Action type invalid", args.Key)
         };
 
     void GetAction(
         KeyPressedEventArgs args)
     {
-        IITTrack? track = GetCurrentTrackAndSaveArtwork();
+        IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
 
         void onButtonClick(string buttonContent)
@@ -125,7 +129,7 @@ public class ShortcutManager
     void RateAction(
         KeyPressedEventArgs args)
     {
-        IITTrack? track = GetCurrentTrackAndSaveArtwork();
+        IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
 
         void onButtonClick(string buttonContent)
@@ -143,12 +147,11 @@ public class ShortcutManager
             $"file:///{artworkLocation}");
         logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Rate", args.Key);
     }
-
     void RateAction(
         KeyPressedEventArgs args,
         int stars)
     {
-        IITTrack? track = GetCurrentTrackAndSaveArtwork();
+        IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
 
         track.Rating = stars * 20;
@@ -163,7 +166,7 @@ public class ShortcutManager
     void AddToPlaylistAction(
         KeyPressedEventArgs args)
     {
-        IITTrack? track = GetCurrentTrackAndSaveArtwork();
+        IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
 
         IEnumerable<IITUserPlaylist> playlists = iTunesHelper.GetAllPlaylists();
@@ -195,12 +198,11 @@ public class ShortcutManager
             $"file:///{artworkLocation}");
         logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: AddToPlaylist", args.Key);
     }
-
     void AddToPlaylistAction(
         KeyPressedEventArgs args,
         string playlistName)
     {
-        IITTrack? track = GetCurrentTrackAndSaveArtwork();
+        IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
 
         IEnumerable<IITUserPlaylist> playlists = iTunesHelper.GetAllPlaylists();
@@ -220,7 +222,22 @@ public class ShortcutManager
         logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: AddToPlaylist [{playlistName}]", args.Key, playlistName);
     }
 
+    void ViewLyrics(
+        KeyPressedEventArgs args)
+    {
+        IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
+        if (track is null) return;
 
+        if (string.IsNullOrWhiteSpace(track.Lyrics))
+        {
+            notifications.Send("Failed to view lyrics.\nError: The current track does not have any lyrics.");
+            return;
+        }
+
+        windowHelper.CreateLyricsView(track, artworkLocation);
+
+        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: ViewLyrics", args.Key);
+    }
 
 
     public void Load()

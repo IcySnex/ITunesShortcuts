@@ -61,9 +61,6 @@ public partial class CreateShortcutViewModel : ObservableObject
                 IEnumerable<string> playlists = iTunesHelper.GetAllPlaylists().Select(playlist => playlist.Name);
                 Parameters = playlists.AddFirst("Select later").ToArray();
                 break;
-            case ShortcutAction.SetHeart:
-                Parameters = new[] { "Select later", "True", "False" };
-                break;
         }
         SelectedParameter = 0;
     }

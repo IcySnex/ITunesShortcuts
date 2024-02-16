@@ -24,6 +24,7 @@
 		<None Remove="Views\CreateShortcutView.xaml" />
 		<None Remove="Views\HomeView.xaml" />
 		<None Remove="Views\LoggerView.xaml" />
+		<None Remove="Views\LyricsView.xaml" />
 		<None Remove="Views\MainView.xaml" />
 		<None Remove="Views\SettingsView.xaml" />
 	</ItemGroup>
@@ -60,7 +61,8 @@
 		<PackageReference Include="H.NotifyIcon" Version="2.0.124" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.5.1" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.240211001" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
 		<PackageReference Include="Serilog" Version="3.1.1" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
@@ -83,6 +85,9 @@
 		<None Update="icon.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\LyricsView.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\SettingsView.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -103,15 +108,11 @@
 		</Page>
 	</ItemGroup>
 
+	<ItemGroup>
+		<Resource Remove="Views\CreateShortcutView.xaml" />
+	</ItemGroup>
+	
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <CustomAdditionalCompileInputs Remove="Views\CreateShortcutView.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Resource Remove="Views\CreateShortcutView.xaml" />
-	</ItemGroup>
 </Project>
