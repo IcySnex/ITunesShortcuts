@@ -1,5 +1,4 @@
-﻿using iTunesLib;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ITunesShortcuts.Enums;
 using ITunesShortcuts.EventArgs;

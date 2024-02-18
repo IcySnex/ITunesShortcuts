@@ -6,7 +6,7 @@ public class Attributes : DependencyObject
 {
     public static readonly DependencyProperty TitleProperty = DependencyProperty.RegisterAttached(
         "Title", typeof(string), typeof(Attributes), new(null));
-    
+
     public static readonly DependencyProperty DescriptionProperty = DependencyProperty.RegisterAttached(
         "Description", typeof(string), typeof(Attributes), new(null));
 
@@ -22,7 +22,7 @@ public class Attributes : DependencyObject
     public static string GetTitle(
         UIElement element) =>
         (string)element.GetValue(TitleProperty);
-    
+
 
     public static void SetDescription(
         UIElement element,

@@ -1,7 +1,6 @@
 ﻿using iTunesLib;
 using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System.Diagnostics;

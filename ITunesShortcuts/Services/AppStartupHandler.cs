@@ -3,11 +3,20 @@ using ITunesShortcuts.Models;
 using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics;
 
 namespace ITunesShortcuts.Services;
 
 public class AppStartupHandler
 {
+    readonly ILogger<AppStartupHandler> logger;
+    readonly Config configuration;
+    readonly WindowHelper windowHelper;
+    readonly JsonConverter converter;
+    readonly Notifications notifications;
+    readonly SystemTray systemTray;
+    readonly KeyboardListener keyboardListener;
+
     public AppStartupHandler(
         ILogger<AppStartupHandler> logger,
         IOptions<Config> configuration,
@@ -21,6 +30,14 @@ public class AppStartupHandler
         ShortcutManager shortcutManager,
         KeyboardListener keyboardListener)
     {
+        this.logger = logger;
+        this.configuration = configuration.Value;
+        this.windowHelper = windowHelper;
+        this.converter = converter;
+        this.notifications = notifications;
+        this.systemTray = systemTray;
+        this.keyboardListener = keyboardListener;
+
         try
         {
             iTunesHelper.ValidateInstallation();
@@ -39,26 +56,29 @@ public class AppStartupHandler
 
             mainView.Closed += (s, e) =>
             {
-                notifications.Unregister();
+                if (configuration.Value.MinimizeToTray)
+                {
+                    windowHelper.SetVisibility(false);
+                    systemTray.ToggleWindowItem.Text = "Show window";
 
-                keyboardListener.Stop();
+                    e.Handled = true;
+                    return;
+                }
 
-                systemTray.Disable();
-
-                windowHelper.LoggerView?.Close();
-                windowHelper.LyricsView?.Close();
-
-                string config = converter.ToString(configuration.Value);
-                File.WriteAllText("configuration.json", config);
-
-                logger.LogInformation("[MainView-Closed] Closed main window.");
+                PrepareShutdown();
+                Process.GetCurrentProcess().Kill();
             };
 
             systemTray.Enable();
             if (configuration.Value.LaunchMinimized)
-                systemTray.ToggleWindow();
+            {
+                windowHelper.SetVisibility(false);
+                systemTray.ToggleWindowItem.Text = "Show window";
+            }
             else
+            {
                 mainView.Activate();
+            }
 
             navigation.Navigate("Home");
 
@@ -75,5 +95,23 @@ public class AppStartupHandler
             Process.GetCurrentProcess().Kill();
 #endif
         }
+    }
+
+
+    public void PrepareShutdown()
+    {
+        notifications.Unregister();
+
+        keyboardListener.Stop();
+
+        systemTray.Disable();
+
+        windowHelper.LoggerView?.Close();
+        windowHelper.LyricsView?.Close();
+
+        string config = converter.ToString(configuration);
+        File.WriteAllText("configuration.json", config);
+
+        logger.LogInformation("[AppStartupHandler-PrepareShutdown] Closed main window.");
     }
 }

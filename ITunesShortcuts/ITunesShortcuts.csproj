@@ -11,6 +11,7 @@
 
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<UseWinUI>true</UseWinUI>
 		<WindowsPackageType>None</WindowsPackageType>
@@ -20,7 +21,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="Assets\icon.png" />
 		<None Remove="Views\CreateShortcutView.xaml" />
 		<None Remove="Views\HomeView.xaml" />
 		<None Remove="Views\LoggerView.xaml" />
@@ -30,30 +30,32 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		
 		<COMReference Include="iTunesLib">
-		  <VersionMinor>13</VersionMinor>
-		  <VersionMajor>1</VersionMajor>
-		  <Guid>9e93c96f-cf0d-43f6-8ba8-b807a3370712</Guid>
-		  <Lcid>0</Lcid>
-		  <WrapperTool>tlbimp</WrapperTool>
-		  <Isolated>false</Isolated>
-		  <EmbedInteropTypes>true</EmbedInteropTypes>
+			<VersionMinor>13</VersionMinor>
+			<VersionMajor>1</VersionMajor>
+			<Guid>9e93c96f-cf0d-43f6-8ba8-b807a3370712</Guid>
+			<Lcid>0</Lcid>
+			<WrapperTool>tlbimp</WrapperTool>
+			<Isolated>false</Isolated>
+			<EmbedInteropTypes>true</EmbedInteropTypes>
 		</COMReference>
-		
+
 		<COMReference Include="IWshRuntimeLibrary">
-		  <WrapperTool>tlbimp</WrapperTool>
-		  <VersionMinor>0</VersionMinor>
-		  <VersionMajor>1</VersionMajor>
-		  <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
-		  <Lcid>0</Lcid>
-		  <Isolated>false</Isolated>
-		  <EmbedInteropTypes>true</EmbedInteropTypes>
+			<WrapperTool>tlbimp</WrapperTool>
+			<VersionMinor>0</VersionMinor>
+			<VersionMajor>1</VersionMajor>
+			<Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+			<Lcid>0</Lcid>
+			<Isolated>false</Isolated>
+			<EmbedInteropTypes>true</EmbedInteropTypes>
 		</COMReference>
 	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="icon.ico" />
+		<Content Include="icon.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -76,12 +78,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Update="Assets\icon.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Update="icon.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -101,17 +97,17 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>
-
 	<ItemGroup>
 		<Page Update="Views\MainView.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>
-
 	<ItemGroup>
-		<Resource Remove="Views\CreateShortcutView.xaml" />
+		<Page Update="Views\CreateShortcutView.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
-	
+
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>

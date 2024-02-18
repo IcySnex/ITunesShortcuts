@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ITunesShortcuts.Enums;
+using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
 using ITunesShortcuts.Services;
 using ITunesShortcuts.Views;
@@ -62,7 +62,7 @@ public partial class HomeViewModel : ObservableObject
 
         if (keyboardListener.GetKeys().Any(key => key.Key == viewModel.Key))
         {
-            await windowHelper.AlertErrorAsync("The key is already used for another shortcut. Please choose another.", "Something went wrong!", "HomeViewModel-EditShortcutAsync");
+            _ = Win32.MessageBox(IntPtr.Zero, $"Error: Failed to create shortcut. The key '{viewModel.Key}' is already used for another shortcut.", "Error", Win32.MB_OK | Win32.MB_ICONERROR);
             return;
         }
 
@@ -121,7 +121,7 @@ public partial class HomeViewModel : ObservableObject
 
         if (shortcut.Key != viewModel.Key && keyboardListener.GetKeys().Any(key => key.Key == viewModel.Key))
         {
-            await windowHelper.AlertErrorAsync("The key is already used for another shortcut. Please choose another.", "Something went wrong!", "HomeViewModel-EditShortcutAsync");
+            _ = Win32.MessageBox(IntPtr.Zero, $"Error: Failed to create shortcut. The key '{shortcut.Key}' is already used for another shortcut.", "Error", Win32.MB_OK | Win32.MB_ICONERROR);
             return;
         }
 

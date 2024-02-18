@@ -5,7 +5,7 @@ namespace ITunesShortcuts.Views;
 
 public sealed partial class HomeView : Page
 {
-    readonly HomeViewModel viewModel = App.Provider.GetRequiredService<HomeViewModel>(); 
+    readonly HomeViewModel viewModel = App.Provider.GetRequiredService<HomeViewModel>();
 
     public HomeView()
     {

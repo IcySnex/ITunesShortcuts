@@ -1,5 +1,7 @@
 ﻿using H.NotifyIcon.Core;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace ITunesShortcuts.Services;
@@ -9,26 +11,29 @@ public class SystemTray
     readonly ILogger<SystemTray> logger;
     readonly WindowHelper windowHelper;
     readonly Navigation navigation;
+    readonly KeyboardListener keyboardListener;
 
     TrayIconWithContextMenu? icon;
-    readonly PopupMenuItem exitItem = default!;
-    readonly PopupMenuItem toggleShortcutsItem = default!;
-    readonly PopupMenuItem settingsItem = default!;
-    readonly PopupMenuItem toogleWindowItem = default!;
+    readonly public PopupMenuItem ExitItem = default!;
+    readonly public PopupMenuItem ToggleShortcutsItem = default!;
+    readonly public PopupMenuItem SettingsItem = default!;
+    readonly public PopupMenuItem ToggleWindowItem = default!;
 
     public SystemTray(
         ILogger<SystemTray> logger,
         WindowHelper windowHelper,
-        Navigation navigation)
+        Navigation navigation,
+        KeyboardListener keyboardListener)
     {
         this.logger = logger;
         this.windowHelper = windowHelper;
         this.navigation = navigation;
+        this.keyboardListener = keyboardListener;
 
-        toggleShortcutsItem = new("Disable all shortcuts", (_, _) => ToggleShortcuts());
-        toogleWindowItem = new("Hide window", (_, _) => ToggleWindow());
-        settingsItem = new("Settings", (_, _) => Settings());
-        exitItem = new("Exit", (_, _) => Exit());
+        ToggleShortcutsItem = new("Disable all shortcuts", (_, _) => ToggleShortcuts());
+        ToggleWindowItem = new("Hide window", (_, _) => ToggleWindow());
+        SettingsItem = new("Settings", (_, _) => Settings());
+        ExitItem = new("Exit", (_, _) => Exit());
 
         logger.LogInformation("[SystemTray-.ctor] SystemTray has been initialized.");
     }
@@ -44,12 +49,12 @@ public class SystemTray
             {
                 Items =
                 {
-                    toggleShortcutsItem,
+                    ToggleShortcutsItem,
                     new PopupMenuSeparator(),
-                    settingsItem,
-                    toogleWindowItem,
+                    SettingsItem,
+                    ToggleWindowItem,
                     new PopupMenuSeparator(),
-                    exitItem
+                    ExitItem
                 }
             }
         };
@@ -75,43 +80,47 @@ public class SystemTray
     }
 
 
-    public void ToggleShortcuts()
+    void ToggleShortcuts()
     {
-        if (toggleShortcutsItem.Text == "Enable all shortcuts")
+        if (ToggleShortcutsItem.Text == "Enable all shortcuts")
         {
-            // Enable
-            toggleShortcutsItem.Text = "Disable all shortcuts";
+            keyboardListener.Start();
+            ToggleShortcutsItem.Text = "Disable all shortcuts";
             return;
         }
 
-        // Disable
-        toggleShortcutsItem.Text = "Enable all shortcuts";
+        keyboardListener.Stop();
+        ToggleShortcutsItem.Text = "Enable all shortcuts";
     }
 
-    public void ToggleWindow()
+    void ToggleWindow()
     {
-        if (toogleWindowItem.Text == "Show window")
+        if (ToggleWindowItem.Text == "Show window")
         {
             windowHelper.SetVisibility(true);
-            toogleWindowItem.Text = "Hide window";
+            ToggleWindowItem.Text = "Hide window";
             return;
         }
 
         windowHelper.SetVisibility(false);
-        toogleWindowItem.Text = "Show window";
+        ToggleWindowItem.Text = "Show window";
     }
 
-    public void Settings()
+    void Settings()
     {
-        if (toogleWindowItem.Text == "Show window")
+        if (ToggleWindowItem.Text == "Show window")
         {
             windowHelper.SetVisibility(true);
-            toogleWindowItem.Text = "Hide window";
+            ToggleWindowItem.Text = "Hide window";
         }
 
-        windowHelper.EnqueDispatcher(() => navigation.Navigate("Settings"));
+        windowHelper.EnqueueDispatcher(() => navigation.Navigate("Settings"));
     }
 
-    public void Exit() =>
-        windowHelper.Close();
+    void Exit()
+    {
+        App.Provider.GetRequiredService<AppStartupHandler>().PrepareShutdown();
+
+        Process.GetCurrentProcess().Kill();
+    }
 }

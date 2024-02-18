@@ -34,4 +34,7 @@ public partial class Config : ObservableObject
 
     [ObservableProperty]
     bool launchMinimized = false;
+
+    [ObservableProperty]
+    bool minimizeToTray = false;
 }

@@ -1,10 +1,8 @@
 ﻿using ITunesShortcuts.Enums;
 using ITunesShortcuts.EventArgs;
 using ITunesShortcuts.Helpers;
-using ITunesShortcuts.Models;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace ITunesShortcuts.Services;
@@ -68,7 +66,7 @@ public class KeyboardListener
         HashSet<Modifier>? modifiers = null;
 
         // Early return if (should not listen for key & key is not a modifier) or not all modifiers are pressed
-        bool shouldListenForKey = ListenForAllKeys ||keysToListen.TryGetValue(key, out modifiers);
+        bool shouldListenForKey = ListenForAllKeys || keysToListen.TryGetValue(key, out modifiers);
         bool areAllModifiersPressed = modifiers?.All(modifier => modifier.ToKey() is Key modifierKey && pressedKeys.Contains(modifierKey)) ?? true;
         if (!shouldListenForKey && !key.IsModifier() || !areAllModifiersPressed)
             return PassNextHookEx();
@@ -159,7 +157,7 @@ public class KeyboardListener
         logger.Log(result ? LogLevel.Information : LogLevel.Warning, "[KeyboardListener-Subscribe] Action subscribed to [{key}] press: {result}.", key.ToString(), result);
         return result;
     }
-    
+
     public bool Unsubscribe(
         Key key)
     {
@@ -178,7 +176,7 @@ public class KeyboardListener
             return;
 
         if (keySubscriptions.TryGetValue(args.Key, out Action<KeyPressedEventArgs>? action))
-            windowHelper.EnqueDispatcher(() => action.Invoke(args));
+            windowHelper.EnqueueDispatcher(() => action.Invoke(args));
 
     }
 

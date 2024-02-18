@@ -68,23 +68,23 @@
             <Rectangle Style="{StaticResource DividerStyle}" />
 
             <ContentControl
+                hlp:Attributes.Description="Minimize the app to the system tray instead of quitting it on window close"
+                hlp:Attributes.Glyph="&#xe8fc;"
+                hlp:Attributes.Title="Minimize To Tray"
+                Style="{StaticResource SettingsCard}">
+
+                <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.MinimizeToTray, Mode=TwoWay}" />
+            </ContentControl>
+
+            <Rectangle Style="{StaticResource DividerStyle}" />
+
+            <ContentControl
                 hlp:Attributes.Description="Creates and shows a new lgoger window"
                 hlp:Attributes.Glyph="&#xe7bc;"
                 hlp:Attributes.Title="Logger"
                 Style="{StaticResource SettingsCard}">
 
                 <Button Command="{x:Bind viewModel.LoggerCommand}" Content="Show" />
-            </ContentControl>
-
-            <Rectangle Style="{StaticResource DividerStyle}" />
-
-            <ContentControl
-                hlp:Attributes.Description="Run a debug specific command"
-                hlp:Attributes.Glyph="&#xec7a;"
-                hlp:Attributes.Title="Debug"
-                Style="{StaticResource SettingsCard}">
-
-                <Button Command="{x:Bind viewModel.DebugCommand}" Content="Execute" />
             </ContentControl>
         </StackPanel>
 

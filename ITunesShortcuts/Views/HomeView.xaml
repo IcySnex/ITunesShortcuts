@@ -205,7 +205,7 @@
     </Page.Resources>
 
     <ScrollViewer>
-        <Grid Margin="24,36">
+        <Grid Margin="24,36,24,24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="36" />
@@ -219,14 +219,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Image Source="../Assets/icon.png" />
+                <Image Source="../icon.png" />
                 <StackPanel Grid.Column="2" VerticalAlignment="Center">
                     <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="iTunes Shortcuts" />
                     <TextBlock>
                         <Run Text="IcySnex •" />
                         <Hyperlink NavigateUri="https://github.com/IcySnex/ITunesShortcuts" ToolTipService.ToolTip="Open the source code on GitHub">GitHub (Source Code)</Hyperlink>
                     </TextBlock>
-                    <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Easily manage your iTunes library with hotkeys" />
+                    <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Easily manage your currently playing iTunes track with hotkeys." />
                 </StackPanel>
             </Grid>
 

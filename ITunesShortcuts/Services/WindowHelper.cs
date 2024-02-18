@@ -1,16 +1,16 @@
 ﻿using iTunesLib;
+using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml;
 using Microsoft.UI;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using Windows.Foundation;
 using WinRT.Interop;
-using Microsoft.UI.Windowing;
-using ITunesShortcuts.Helpers;
-using Microsoft.UI.Dispatching;
 
 namespace ITunesShortcuts.Services;
 
@@ -26,7 +26,7 @@ public class WindowHelper
     /// <summary>
     /// Creates a new WindowHelper with with optional logging functions
     /// </summary>
-    /// <param name="window">The winodw which is used in the helper</param>
+    /// <param name="window">The window which is used in the helper</param>
     /// <param name="logger">The logger which will be used for logging</param>
     public WindowHelper(
         MainView mainView,
@@ -86,7 +86,7 @@ public class WindowHelper
             LoggerView = null;
         };
 
-        WindowId id = Win32Interop.GetWindowIdFromWindow(WindowNative.GetWindowHandle(LoggerView));
+        WindowId id = Win32Interop.GetWindowIdFromWindow(GetHWnd(LoggerView));
         AppWindow window = AppWindow.GetFromWindowId(id);
 
         window.Resize(new(700, 400));
@@ -111,7 +111,7 @@ public class WindowHelper
             LyricsView = null;
         };
 
-        WindowId id = Win32Interop.GetWindowIdFromWindow(WindowNative.GetWindowHandle(LyricsView));
+        WindowId id = Win32Interop.GetWindowIdFromWindow(GetHWnd(LyricsView));
         DisplayArea display = DisplayArea.GetFromWindowId(id, DisplayAreaFallback.Nearest);
 
         AppWindow window = AppWindow.GetFromWindowId(id);
@@ -141,24 +141,17 @@ public class WindowHelper
 
 
     /// <summary>
-    /// Trys to enque a callack to the current main views dispatcher queue
+    /// Tries to enqueue a callback to the current main views dispatcher queue
     /// </summary>
-    public void EnqueDispatcher(
+    public void EnqueueDispatcher(
         DispatcherQueueHandler callback) =>
         mainView.DispatcherQueue.TryEnqueue(callback);
-    
 
-    /// <summary>
-    /// Closes the current main window
-    /// </summary>
-    public void Close() =>
-        EnqueDispatcher(mainView.Close);
-    
 
     /// <summary>
     /// Sets the visibility of the current main window
     /// </summary>
-    /// <param name="isVisible">Weither to hide or show the window</param>
+    /// <param name="isVisible">Whether to hide or show the window</param>
     public void SetVisibility(
         bool isVisible)
     {
@@ -217,10 +210,10 @@ public class WindowHelper
 
         logger.LogInformation("[WindowHelper-SetSize] Set window size [{width}x{height}]", width, height);
     }
-   
+
 
     /// <summary>
-    /// Dispalys a ContentDialog
+    /// Displays a ContentDialog
     /// </summary>
     /// <param name="dialog">The dialog to display</param>
     public IAsyncOperation<ContentDialogResult> AlertAsync(
@@ -258,29 +251,4 @@ public class WindowHelper
         };
         return AlertAsync(dialog);
     }
-
-    /// <summary>
-    /// Creates a new ContentDialog which displays the content and title and logs the message
-    /// </summary>
-    /// <param name="message">The content of the dialog</param>
-    /// <param name="title">The title of the dialog</param>
-    public IAsyncOperation<ContentDialogResult> AlertErrorAsync(
-        string message,
-        string title,
-        string caller)
-    {
-        logger.LogError("[{caller}] {title}: {message}", caller, title, message);
-        return AlertAsync(message, title);
-    }
-
-    /// <summary>
-    /// Creates a new ContentDialog which displays the content and title and logs the message
-    /// </summary>
-    /// <param name="ex">The content of the dialog</param>
-    /// <param name="title">The title of the dialog</param>
-    public IAsyncOperation<ContentDialogResult> AlertErrorAsync(
-        Exception ex,
-        string title,
-        string caller) =>
-        AlertErrorAsync(ex.Message, title, caller);
 }

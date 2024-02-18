@@ -9,6 +9,7 @@ public sealed partial class MainView : Window
     public MainView()
     {
         SystemBackdrop = MicaController.IsSupported() ? new MicaBackdrop() : new DesktopAcrylicBackdrop();
+
         this.InitializeComponent();
     }
 }

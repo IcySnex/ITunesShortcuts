@@ -1,6 +1,6 @@
-using Microsoft.UI.Xaml.Controls;
 using ITunesShortcuts.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
 
 namespace ITunesShortcuts.Views;
 

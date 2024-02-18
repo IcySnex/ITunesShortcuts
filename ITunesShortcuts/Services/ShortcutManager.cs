@@ -79,7 +79,8 @@ public class ShortcutManager
                         RateAction(args, stars);
                         break;
                 }
-            },
+            }
+            ,
             ShortcutAction.AddToPlaylist => args =>
             {
                 switch (shortcut.Parameter)
@@ -91,7 +92,8 @@ public class ShortcutManager
                         AddToPlaylistAction(args, shortcut.Parameter);
                         break;
                 }
-            },
+            }
+            ,
             ShortcutAction.ViewLyrics => ViewLyrics,
             _ => args => logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Action type invalid", args.Key)
         };
@@ -142,7 +144,7 @@ public class ShortcutManager
 
         notifications.SendWithButton(
             new[] { "1 ★", "2 ★", "3 ★", "4 ★", "5 ★" },
-            onButtonClick, 
+            onButtonClick,
             $"Rate current track\n{track.Name}\n{track.Artist} - {track.Album}",
             $"file:///{artworkLocation}");
         logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Rate", args.Key);
@@ -277,7 +279,7 @@ public class ShortcutManager
             if (keyboardListener.RemoveKey(key.Key) && keyboardListener.Unsubscribe(key.Key))
                 continue;
 
-            Win32.MessageBox(IntPtr.Zero, $"Error: Failed to remove or unsubscribe action from key: {key.Key}", "Error",  Win32.MB_OK | Win32.MB_ICONERROR);
+            _ = Win32.MessageBox(IntPtr.Zero, $"Error: Failed to remove or unsubscribe action from key: {key.Key}", "Error", Win32.MB_OK | Win32.MB_ICONERROR);
         }
 
         foreach (Shortcut shortcut in Shortcuts)
@@ -285,7 +287,7 @@ public class ShortcutManager
             if (keyboardListener.AddKey(shortcut.Key, shortcut.Modifiers) && keyboardListener.Subscribe(shortcut.Key, CreateAction(shortcut)))
                 continue;
 
-            Win32.MessageBox(IntPtr.Zero, $"Error: Failed to add or subscribe action to key: {shortcut.Key}", "Error", Win32.MB_OK | Win32.MB_ICONERROR);
+            _ = Win32.MessageBox(IntPtr.Zero, $"Error: Failed to add or subscribe action to key: {shortcut.Key}", "Error", Win32.MB_OK | Win32.MB_ICONERROR);
         }
 
         logger.LogInformation("[ShortcutManager-OnShortcutsCollectionChanged] Updated KeyboardListener to newest shortcuts");

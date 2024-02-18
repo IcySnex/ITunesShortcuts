@@ -1,20 +1,20 @@
 using iTunesLib;
-using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.Graphics.Canvas;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.Graphics.Canvas.UI.Xaml;
-using Windows.Foundation;
-using Microsoft.Graphics.Canvas.Brushes;
-using Windows.UI;
-using Windows.Storage.Streams;
-using Windows.Graphics.Imaging;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml.Media;
-using WinRT.Interop;
 using ITunesShortcuts.Helpers;
+using ITunesShortcuts.Services;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
+using Windows.UI;
 
 namespace ITunesShortcuts.Views;
 
@@ -91,7 +91,7 @@ public sealed partial class LyricsView : Window
         gradientMask.ColorStops.Add(container.Compositor.CreateColorGradientStop(1, Color.FromArgb(0, 0, 0, 0)));
 
         renderTargetBitmap = new();
-        dpi = (int)Win32.GetDpiForWindow(WindowNative.GetWindowHandle(this));
+        dpi = (int)Win32.GetDpiForWindow(WindowHelper.GetHWnd(this));
 
         canvas.Invalidate();
     }

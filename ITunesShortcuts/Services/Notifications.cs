@@ -3,7 +3,6 @@ using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using Windows.Foundation;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ITunesShortcuts.Services;
 
@@ -40,7 +39,7 @@ public class Notifications
         logger.LogInformation("[Notifications-.ctor] Notifications has been initialized.");
     }
 
-    
+
     public void Register()
     {
         notificationManager.NotificationInvoked += (s, args) => Handle(args);
@@ -66,7 +65,7 @@ public class Notifications
 
     public void Handle(
         AppNotificationActivatedEventArgs args) =>
-        windowHelper.EnqueDispatcher(() =>
+        windowHelper.EnqueueDispatcher(() =>
         {
             if (!args.Arguments.TryGetValue(Action, out string? actionType) || actionType is null)
             {

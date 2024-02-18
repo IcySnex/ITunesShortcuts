@@ -14,7 +14,7 @@ public class LastItemTemplateSelector : DataTemplateSelector
     {
         ItemsControl? itemsControl = ItemsControl.ItemsControlFromItemContainer(container);
         if (itemsControl is not null && item is not null && itemsControl.Items.IndexOf(item) == itemsControl.Items.Count - 1)
-                return LastItemTemplate;
+            return LastItemTemplate;
 
         return NormalTemplate;
 

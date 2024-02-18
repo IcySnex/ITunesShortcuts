@@ -9,6 +9,7 @@ public sealed partial class LoggerView : Window
     public LoggerView()
     {
         SystemBackdrop = MicaController.IsSupported() ? new MicaBackdrop() : new DesktopAcrylicBackdrop();
+
         this.InitializeComponent();
     }
 }
