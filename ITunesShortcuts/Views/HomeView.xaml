@@ -37,7 +37,7 @@
                     <FontIcon
                         FontSize="24"
                         Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                        Glyph="&#xe81c;" />
+                        Glyph="{x:Bind Action, Converter={StaticResource ShortcutToGlyphConverter}}" />
 
                     <TextBlock
                         Grid.Column="2"
@@ -132,7 +132,7 @@
                 <FontIcon
                     FontSize="24"
                     Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                    Glyph="&#xe81c;" />
+                    Glyph="{x:Bind Action, Converter={StaticResource ShortcutToGlyphConverter}}" />
 
                 <TextBlock
                     Grid.Column="2"
