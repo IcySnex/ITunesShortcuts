@@ -5,6 +5,7 @@ using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Specialized;
+using System.Runtime.InteropServices;
 
 namespace ITunesShortcuts.Services;
 

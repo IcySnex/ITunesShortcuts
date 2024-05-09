@@ -4,12 +4,15 @@ using ITunesShortcuts.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace ITunesShortcuts.Services;
 
-public class ITunesHelper
+public class ITunesHelper : IDisposable
 {
     readonly ILogger<ITunesHelper> logger;
+
+    bool disposedValue;
 
     public ITunesHelper(
         ILogger<ITunesHelper> logger)
@@ -19,10 +22,47 @@ public class ITunesHelper
         logger.LogInformation("[ITunesHelper-.ctor] ITunesHelper has been initialized.");
     }
 
+    ~ITunesHelper()
+    {
+        Dispose(false);
+
+        logger.LogInformation("[ITunesHelper-] ITunesHelper has been deinitialized.");
+    }
+
+
+    protected virtual void Dispose(
+        bool explicitly)
+    {
+        if (disposedValue)
+            return;
+
+        if (explicitly)
+        {
+            registrySubKey = null;
+        }
+
+        iTunes.OnPlayerPlayEvent -= OnPlayerStart;
+        iTunes.OnPlayerStopEvent -= OnPlayerStop;
+        
+        Marshal.ReleaseComObject(iTunes);
+        iTunes = default!;
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+
+        disposedValue = true;
+        logger.LogInformation("[ITunesHelper-Dispose] ITunesHelper has been disposed [{explicitly}].", explicitly);
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
 
     iTunesApp iTunes = default!;
     string? registrySubKey = null;
-
 
     public ITunesInfo? GetInfo()
     {

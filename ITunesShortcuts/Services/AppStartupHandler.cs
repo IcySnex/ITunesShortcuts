@@ -14,6 +14,7 @@ public class AppStartupHandler
     readonly WindowHelper windowHelper;
     readonly JsonConverter converter;
     readonly Notifications notifications;
+    readonly ITunesHelper iTunesHelper;
     readonly SystemTray systemTray;
     readonly KeyboardListener keyboardListener;
 
@@ -35,6 +36,7 @@ public class AppStartupHandler
         this.windowHelper = windowHelper;
         this.converter = converter;
         this.notifications = notifications;
+        this.iTunesHelper = iTunesHelper;
         this.systemTray = systemTray;
         this.keyboardListener = keyboardListener;
 
@@ -105,6 +107,8 @@ public class AppStartupHandler
         keyboardListener.Stop();
 
         systemTray.Disable();
+
+        iTunesHelper.Dispose();
 
         windowHelper.LoggerView?.Close();
         windowHelper.LyricsView?.Close();
