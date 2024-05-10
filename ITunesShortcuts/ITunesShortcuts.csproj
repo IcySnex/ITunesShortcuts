@@ -6,6 +6,10 @@
 		<Platforms>x86;x64;ARM64</Platforms>
 		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
 
+		<AssemblyVersion>1.1.0</AssemblyVersion>
+		<FileVersion>1.1.0</FileVersion>
+		<Version>1.1.0</Version>
+
 		<RootNamespace>ITunesShortcuts</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 
