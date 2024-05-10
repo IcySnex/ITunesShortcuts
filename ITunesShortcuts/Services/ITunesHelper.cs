@@ -46,9 +46,13 @@ public class ITunesHelper : IDisposable
         // Unmanaged
         iTunes.OnPlayerPlayEvent -= OnPlayerPlayEvent;
         iTunes.OnPlayerStopEvent -= OnPlayerStopEvent;
+        iTunes.OnQuittingEvent -= OnQuittingEvent;
 
-        Marshal.ReleaseComObject(iTunes);
-        iTunes = default!;
+        if (iTunes is not null)
+        {
+            Marshal.ReleaseComObject(iTunes);
+            iTunes = default!;
+        }
         if (currentTrack is not null)
         {
             Marshal.ReleaseComObject(currentTrack);
@@ -183,6 +187,7 @@ public class ITunesHelper : IDisposable
 
         iTunes.OnPlayerPlayEvent += OnPlayerPlayEvent;
         iTunes.OnPlayerStopEvent += OnPlayerStopEvent;
+        iTunes.OnQuittingEvent += OnQuittingEvent;
         logger.LogInformation("[ITunesHelper-ValidateInitialization] Hooked player events.");
     }
 
@@ -217,6 +222,14 @@ public class ITunesHelper : IDisposable
             OnTrackChanged?.Invoke(this, new(currentTrack, null));
             currentTrack = null;
         }
+    }
+
+    private void OnQuittingEvent()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+
+        disposedValue = false;
     }
 
 
