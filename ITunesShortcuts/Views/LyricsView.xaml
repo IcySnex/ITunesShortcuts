@@ -76,6 +76,8 @@
             Padding="6"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
+            Background="Transparent"
+            BorderBrush="Transparent"
             Click="OnCloseButtonClick">
             <FontIcon FontSize="14" Glyph="&#xe8bb;" />
         </Button>
