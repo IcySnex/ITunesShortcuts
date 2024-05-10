@@ -75,7 +75,7 @@ public class AppStartupHandler
 
             mainView.Closed += (s, e) =>
             {
-                if (configuration.Value.MinimizeToTray)
+                if (configuration.Value.MinimizeToTray && !systemTray.IsExitRequested)
                 {
                     windowHelper.SetVisibility(false);
                     systemTray.ToggleWindowItem.Text = "Show window";

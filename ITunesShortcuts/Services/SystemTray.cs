@@ -19,6 +19,8 @@ public class SystemTray
     readonly public PopupMenuItem SettingsItem = default!;
     readonly public PopupMenuItem ToggleWindowItem = default!;
 
+    public bool IsExitRequested { get; private set; } = false;
+
     public SystemTray(
         ILogger<SystemTray> logger,
         MainView mainView,
@@ -121,6 +123,8 @@ public class SystemTray
 
     void Exit()
     {
+        IsExitRequested = true;
+
         mainView.DispatcherQueue.TryEnqueue(mainView.Close);
     }
 }
