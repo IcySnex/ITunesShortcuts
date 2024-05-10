@@ -37,4 +37,7 @@ public partial class Config : ObservableObject
 
     [ObservableProperty]
     bool minimizeToTray = false;
+
+    [ObservableProperty]
+    bool showTrackSummary = false;
 }

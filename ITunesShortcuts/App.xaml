@@ -19,6 +19,7 @@
             <conv:KeyToStringConverter x:Key="KeyToStringConverter" />
             <conv:ShortcutActionToStringConverter x:Key="ShortcutActionToStringConverter" />
             <conv:ShortcutToGlyphConverter x:Key="ShortcutToGlyphConverter" />
+            <conv:StringToBitmapImageConverter x:Key="StringToBitmapImageConverter" />
 
 
             <!--  Styles  -->

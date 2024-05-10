@@ -53,8 +53,7 @@ public class ShortcutManager
             return null;
         }
 
-        track.Artwork.OfType<IITArtwork>().FirstOrDefault()?.SaveArtworkToFile(artworkLocation);
-        logger.LogInformation("[ShortcutManager-GetCurrentTrackAndSaveArtwork] Saved artwork to temp file");
+        iTunesHelper.SaveArtwork(artworkLocation, track);
 
         return track;
     }
@@ -64,20 +63,23 @@ public class ShortcutManager
         Shortcut shortcut) =>
         shortcut.Action switch
         {
-            ShortcutAction.Get => GetAction,
+            ShortcutAction.Get => args =>
+            {
+                GetAction();
+            },
             ShortcutAction.Rate => args =>
             {
                 switch (shortcut.Parameter)
                 {
                     case "Select later":
-                        RateAction(args);
+                        RateAction();
                         break;
                     case "Reset":
-                        RateAction(args, 0);
+                        RateAction(0);
                         break;
                     default:
                         int stars = int.Parse(shortcut.Parameter[0].ToString());
-                        RateAction(args, stars);
+                        RateAction(stars);
                         break;
                 }
             }
@@ -87,20 +89,22 @@ public class ShortcutManager
                 switch (shortcut.Parameter)
                 {
                     case "Select later":
-                        AddToPlaylistAction(args);
+                        AddToPlaylistAction();
                         break;
                     default:
-                        AddToPlaylistAction(args, shortcut.Parameter);
+                        AddToPlaylistAction(shortcut.Parameter);
                         break;
                 }
             }
             ,
-            ShortcutAction.ViewLyrics => ViewLyrics,
+            ShortcutAction.ViewLyrics => args =>
+            {
+                ViewLyrics();
+            },
             _ => args => logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Action type invalid", args.Key)
         };
 
-    void GetAction(
-        KeyPressedEventArgs args)
+    void GetAction()
     {
         IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
@@ -126,11 +130,10 @@ public class ShortcutManager
         notifications.SendWithButton(new[] { "◀", "❚❚", "▶" }, onButtonClick,
             $"Get current track\n{track.Name}\n{track.Artist} - {track.Album}",
             $"file:///{artworkLocation}");
-        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Get", args.Key);
+        logger.LogInformation("[ShortcutManager-Action] Action was invoked: Get");
     }
 
-    void RateAction(
-        KeyPressedEventArgs args)
+    void RateAction()
     {
         IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
@@ -148,10 +151,9 @@ public class ShortcutManager
             onButtonClick,
             $"Rate current track\n{track.Name}\n{track.Artist} - {track.Album}",
             $"file:///{artworkLocation}");
-        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Rate", args.Key);
+        logger.LogInformation("[ShortcutManager-Action] Action was invoked: Rate");
     }
     void RateAction(
-        KeyPressedEventArgs args,
         int stars)
     {
         IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
@@ -163,11 +165,10 @@ public class ShortcutManager
         notifications.Send(
             $"Rate current track ({info})\n{track.Name}\n{track.Artist} - {track.Album}",
             $"file:///{artworkLocation}");
-        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Rate [{stars}]", args.Key, info);
+        logger.LogInformation("[ShortcutManager-Action] Action was invoked: Rate [{stars}]", info);
     }
 
-    void AddToPlaylistAction(
-        KeyPressedEventArgs args)
+    void AddToPlaylistAction()
     {
         IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
@@ -199,10 +200,9 @@ public class ShortcutManager
             onComboBoxSelectItem,
             $"Add current track to playlist\n{track.Name}\n{track.Artist} - {track.Album}",
             $"file:///{artworkLocation}");
-        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: AddToPlaylist", args.Key);
+        logger.LogInformation("[ShortcutManager-Action] Action was invoked: AddToPlaylist");
     }
     void AddToPlaylistAction(
-        KeyPressedEventArgs args,
         string playlistName)
     {
         IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
@@ -222,11 +222,10 @@ public class ShortcutManager
         notifications.Send(
             $"Rate current track ({playlistName}, {playlist.Tracks.Count} tracks)\n{track.Name}\n{track.Artist} - {track.Album}",
             $"file:///{artworkLocation}");
-        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: AddToPlaylist [{playlistName}]", args.Key, playlistName);
+        logger.LogInformation("[ShortcutManager-Action] Action was invoked: AddToPlaylist [{playlistName}]", playlistName);
     }
 
-    void ViewLyrics(
-        KeyPressedEventArgs args)
+    void ViewLyrics()
     {
         IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
         if (track is null) return;
@@ -239,7 +238,7 @@ public class ShortcutManager
 
         windowHelper.CreateLyricsView(track, artworkLocation);
 
-        logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: ViewLyrics", args.Key);
+        logger.LogInformation("[ShortcutManager-Action] Action was invoked: ViewLyrics");
     }
 
 

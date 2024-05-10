@@ -27,6 +27,7 @@
 		<None Remove="Views\LyricsView.xaml" />
 		<None Remove="Views\MainView.xaml" />
 		<None Remove="Views\SettingsView.xaml" />
+		<None Remove="Views\TrackSummaryView.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -81,6 +82,10 @@
 		<None Update="icon.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\TrackSummaryView.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		  <SubType>Designer</SubType>
+		</Page>
 		<Page Update="Views\LyricsView.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>

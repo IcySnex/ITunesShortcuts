@@ -1,7 +1,6 @@
 ﻿using H.NotifyIcon.Core;
-using Microsoft.Extensions.DependencyInjection;
+using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using System.Drawing;
 
 namespace ITunesShortcuts.Services;
@@ -9,6 +8,7 @@ namespace ITunesShortcuts.Services;
 public class SystemTray
 {
     readonly ILogger<SystemTray> logger;
+    readonly MainView mainView;
     readonly WindowHelper windowHelper;
     readonly Navigation navigation;
     readonly KeyboardListener keyboardListener;
@@ -21,11 +21,13 @@ public class SystemTray
 
     public SystemTray(
         ILogger<SystemTray> logger,
+        MainView mainView,
         WindowHelper windowHelper,
         Navigation navigation,
         KeyboardListener keyboardListener)
     {
         this.logger = logger;
+        this.mainView = mainView;
         this.windowHelper = windowHelper;
         this.navigation = navigation;
         this.keyboardListener = keyboardListener;
@@ -119,8 +121,6 @@ public class SystemTray
 
     void Exit()
     {
-        App.Provider.GetRequiredService<AppStartupHandler>().PrepareShutdown();
-
-        Process.GetCurrentProcess().Kill();
+        mainView.DispatcherQueue.TryEnqueue(mainView.Close);
     }
 }

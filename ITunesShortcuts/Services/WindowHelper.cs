@@ -1,5 +1,6 @@
 ﻿using iTunesLib;
 using ITunesShortcuts.Helpers;
+using ITunesShortcuts.ViewModels;
 using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
@@ -104,6 +105,7 @@ public class WindowHelper
         string artworkLocation)
     {
         LyricsView?.Close();
+        TrackSummaryView?.Close();
 
         LyricsView = new(track, artworkLocation);
         LyricsView.Closed += (s, e) =>
@@ -128,6 +130,54 @@ public class WindowHelper
         LyricsView.Activate();
 
         logger.LogInformation("[WindowHelper-CreateLyricsView] Created new LyricsView and hooked handler");
+    }
+
+
+    public Window? TrackSummaryView = null;
+
+    public void CreateTrackSummaryView(
+        TrackSummaryViewModel viewModel)
+    {
+        TrackSummaryView?.Close();
+        LyricsView?.Close();
+
+        TrackSummaryView = new()
+        {
+            Content = new TrackSummaryView(viewModel),
+            Title = "iTunes Shortcuts - Track Summary"
+        };
+        TrackSummaryView.Closed += (s, e) =>
+        {
+            TrackSummaryView = null;
+            viewModel.Dispose();
+        };
+
+        WindowId id = Win32Interop.GetWindowIdFromWindow(GetHWnd(TrackSummaryView));
+        DisplayArea display = DisplayArea.GetFromWindowId(id, DisplayAreaFallback.Nearest);
+
+        AppWindow window = AppWindow.GetFromWindowId(id);
+        window.SetIcon("icon.ico");
+        window.Resize(new(500, viewModel.HasLyrics ? 406 : 336));
+        window.Move(new(display.WorkArea.Width - 512, display.WorkArea.Height - (viewModel.HasLyrics ? 418 : 348)));
+
+        OverlappedPresenter presenter = (OverlappedPresenter)window.Presenter;
+        presenter.SetBorderAndTitleBar(true, false);
+        presenter.IsResizable = false;
+        presenter.IsMaximizable = false;
+        presenter.IsAlwaysOnTop = true;
+
+        viewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName != "HasLyrics")
+                return;
+
+            window.Resize(new(500, viewModel.HasLyrics ? 406 : 336));
+            window.Move(new(display.WorkArea.Width - 512, display.WorkArea.Height - (viewModel.HasLyrics ? 418 : 348)));
+        };
+
+        TrackSummaryView.Activate();
+
+        logger.LogInformation("[WindowHelper-CreateTrackSummaryView] Created new TrackSummaryView and hooked handler");
     }
 
 

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="ITunesShortcuts.Views.TrackSummaryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hlp="using:ITunesShortcuts.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="24" RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80" />
+            <RowDefinition Height="24" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <canvas:CanvasControl
+            Grid.RowSpan="5"
+            Margin="-24"
+            ClearColor="Transparent"
+            Draw="OnCanvasDraw"
+            Opacity="1" />
+
+        <Rectangle
+            Width="80"
+            Height="80"
+            HorizontalAlignment="Left"
+            RadiusX="4"
+            RadiusY="4"
+            Translation="0,0,32">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="{x:Bind viewModel.Artwork, Mode=OneWay, Converter={StaticResource StringToBitmapImageConverter}}" />
+            </Rectangle.Fill>
+            <Rectangle.Shadow>
+                <ThemeShadow />
+            </Rectangle.Shadow>
+        </Rectangle>
+        <Grid Margin="92,0,0,0" VerticalAlignment="Center">
+            <TextBlock
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="{x:Bind viewModel.Track.Name, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis"
+                TextWrapping="NoWrap" />
+            <TextBlock
+                Margin="0,35,0,0"
+                Opacity="0.7"
+                TextTrimming="CharacterEllipsis">
+                <Run Text="{x:Bind viewModel.Track.Artist, Mode=OneWay}" />
+                <Run Text="-" />
+                <Run Text="{x:Bind viewModel.Track.Album, Mode=OneWay}" />
+            </TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button
+                Height="32"
+                HorizontalAlignment="Stretch"
+                Command="{x:Bind viewModel.BackTrackCommand}">
+                <FontIcon FontSize="17" Glyph="&#xe892;" />
+            </Button>
+
+            <Button
+                Grid.Column="2"
+                Height="32"
+                HorizontalAlignment="Stretch"
+                Command="{x:Bind viewModel.PlayPauseCommand}">
+                <FontIcon FontSize="17" Glyph="&#xe769;" />
+            </Button>
+
+            <Button
+                Grid.Column="4"
+                Height="32"
+                HorizontalAlignment="Stretch"
+                Command="{x:Bind viewModel.NextTrackCommand}">
+                <FontIcon FontSize="17" Glyph="&#xe893;" />
+            </Button>
+        </Grid>
+
+        <StackPanel
+            Grid.Row="4"
+            Spacing="0"
+            Style="{StaticResource ContainerStyle}">
+            <ContentControl
+                hlp:Attributes.Description="How much do you like this track?"
+                hlp:Attributes.Glyph="&#xe734;"
+                hlp:Attributes.Title="Rating"
+                Style="{StaticResource SettingsCard}">
+
+                <RatingControl IsClearEnabled="True" Value="{x:Bind viewModel.Rating, Mode=TwoWay}">
+                    <RatingControl.Transform3D>
+                        <CompositeTransform3D
+                            CenterX="119"
+                            ScaleX="1.25"
+                            ScaleY="1.25" />
+                    </RatingControl.Transform3D>
+                </RatingControl>
+            </ContentControl>
+
+            <Rectangle Margin="-16,16" Style="{StaticResource DividerStyle}" />
+
+            <ContentControl
+                hlp:Attributes.Description="Add this track to a playlist"
+                hlp:Attributes.Glyph="&#xe8f4;"
+                hlp:Attributes.Title="Playlist"
+                Style="{StaticResource SettingsCard}">
+
+                <Grid Background="{x:Bind viewModel.AddToPlaylistButtonBackgroundBrush, Mode=OneWay}" CornerRadius="4">
+                    <Grid.BackgroundTransition>
+                        <BrushTransition />
+                    </Grid.BackgroundTransition>
+
+                    <ComboBox
+                        Width="150"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        CornerRadius="4,0,0,4"
+                        ItemsSource="{x:Bind viewModel.Playlists, Mode=OneWay}"
+                        PlaceholderText="Select"
+                        SelectedIndex="{x:Bind viewModel.SelectedPlaylist, Mode=TwoWay}" />
+
+                    <Button
+                        Width="32"
+                        Height="32"
+                        Margin="150,0,0,0"
+                        Padding="0"
+                        Background="Transparent"
+                        Command="{x:Bind viewModel.AddToPlaylistCommand}"
+                        CornerRadius="0,4,4,0">
+                        <FontIcon Glyph="&#xe710;" />
+                    </Button>
+                </Grid>
+            </ContentControl>
+
+            <Rectangle
+                Margin="-16,16"
+                Style="{StaticResource DividerStyle}"
+                Visibility="{x:Bind viewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <ContentControl
+                hlp:Attributes.Description="It's singing time!"
+                hlp:Attributes.Glyph="&#xe7bc;"
+                hlp:Attributes.Title="Lyrics"
+                Style="{StaticResource SettingsCard}"
+                Visibility="{x:Bind viewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+
+                <Button Command="{x:Bind viewModel.ShowLyricsCommand}" Content="Show" />
+            </ContentControl>
+        </StackPanel>
+
+        <Button
+            Margin="-12"
+            Padding="6"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            Command="{x:Bind viewModel.CloseCommand}">
+            <FontIcon FontSize="14" Glyph="&#xe8bb;" />
+        </Button>
+    </Grid>
+</UserControl>

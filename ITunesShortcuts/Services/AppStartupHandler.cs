@@ -1,9 +1,9 @@
 ﻿using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
+using ITunesShortcuts.ViewModels;
 using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Diagnostics;
 
 namespace ITunesShortcuts.Services;
 
@@ -17,6 +17,8 @@ public class AppStartupHandler
     readonly ITunesHelper iTunesHelper;
     readonly SystemTray systemTray;
     readonly KeyboardListener keyboardListener;
+
+    readonly string artworkLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tempArtwork.jpg");
 
     public AppStartupHandler(
         ILogger<AppStartupHandler> logger,
@@ -44,6 +46,20 @@ public class AppStartupHandler
         {
             iTunesHelper.ValidateInstallation();
             iTunesHelper.ValidateCOMRegistration();
+            iTunesHelper.ValidateInitialization();
+            iTunesHelper.OnTrackChanged += (s, e) =>
+            {
+                if (!configuration.Value.ShowTrackSummary || e.OldTrack is null)
+                    return;
+
+                iTunesHelper.SaveArtwork(artworkLocation, e.OldTrack);
+
+                mainView.DispatcherQueue.TryEnqueue(() =>
+                {
+                    TrackSummaryViewModel viewModel = new(logger, windowHelper, iTunesHelper, e.OldTrack, artworkLocation);
+                    windowHelper.CreateTrackSummaryView(viewModel);
+                });
+            };
 
             notifications.Register();
             notifications.ClearAsync().AsTask();
@@ -68,7 +84,6 @@ public class AppStartupHandler
                 }
 
                 PrepareShutdown();
-                Process.GetCurrentProcess().Kill();
             };
 
             systemTray.Enable();
@@ -112,6 +127,7 @@ public class AppStartupHandler
 
         windowHelper.LoggerView?.Close();
         windowHelper.LyricsView?.Close();
+        windowHelper.TrackSummaryView?.Close();
 
         string config = converter.ToString(configuration);
         File.WriteAllText("configuration.json", config);

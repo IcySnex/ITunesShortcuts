@@ -1,4 +1,5 @@
 ﻿using iTunesLib;
+using ITunesShortcuts.EventArgs;
 using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
 using Microsoft.Extensions.Logging;
@@ -38,14 +39,21 @@ public class ITunesHelper : IDisposable
 
         if (explicitly)
         {
+            // Managed
             registrySubKey = null;
         }
 
-        iTunes.OnPlayerPlayEvent -= OnPlayerStart;
-        iTunes.OnPlayerStopEvent -= OnPlayerStop;
-        
+        // Unmanaged
+        iTunes.OnPlayerPlayEvent -= OnPlayerPlayEvent;
+        iTunes.OnPlayerStopEvent -= OnPlayerStopEvent;
+
         Marshal.ReleaseComObject(iTunes);
         iTunes = default!;
+        if (currentTrack is not null)
+        {
+            Marshal.ReleaseComObject(currentTrack);
+            currentTrack = null;
+        }
 
         GC.Collect();
         GC.WaitForPendingFinalizers();
@@ -172,6 +180,43 @@ public class ITunesHelper : IDisposable
 
         iTunes = new();
         logger.LogInformation("[ITunesHelper-ValidateInitialization] iTunes was initialized and is ready.");
+
+        iTunes.OnPlayerPlayEvent += OnPlayerPlayEvent;
+        iTunes.OnPlayerStopEvent += OnPlayerStopEvent;
+        logger.LogInformation("[ITunesHelper-ValidateInitialization] Hooked player events.");
+    }
+
+
+    public event EventHandler<ITunesTrackChangedEventArgs>? OnTrackChanged;
+
+    IITFileOrCDTrack? currentTrack = null;
+
+    void OnPlayerPlayEvent(
+        object iTrack)
+    {
+        if (iTrack is not IITFileOrCDTrack track)
+            return;
+        logger.LogInformation("[ITunesHelper-OnPlayerStopEvent] Player started [{track}].", track.Name);
+
+        if (track.TrackDatabaseID == currentTrack?.TrackDatabaseID)
+            return;
+
+        OnTrackChanged?.Invoke(this, new(currentTrack, track));
+        currentTrack = track;
+    }
+
+    void OnPlayerStopEvent(
+        object iTrack)
+    {
+        if (iTrack is not IITFileOrCDTrack track)
+            return;
+        logger.LogInformation("[ITunesHelper-OnPlayerStopEvent] Player stopped [{track}].", track.Name);
+
+        if (iTunes.CurrentTrack is null)
+        {
+            OnTrackChanged?.Invoke(this, new(currentTrack, null));
+            currentTrack = null;
+        }
     }
 
 
@@ -184,6 +229,20 @@ public class ITunesHelper : IDisposable
 
         logger.LogInformation("[ITunesHelper-GetCurrentTrack] Got current playing track.");
         return track;
+    }
+
+    public bool SaveArtwork(
+        string location,
+        IITFileOrCDTrack track)
+    {
+        IITArtwork? artwork = track.Artwork.OfType<IITArtwork>().FirstOrDefault();
+        if (artwork is null)
+            return false;
+
+        artwork.SaveArtworkToFile(location);
+
+        logger.LogInformation("[ITunesHelper-SaveArtwork] Saved artwork to location [{location}]", location);
+        return true;
     }
 
     public void PlayPause()
