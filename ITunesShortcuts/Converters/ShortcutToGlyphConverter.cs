@@ -13,6 +13,7 @@ public class ShortcutToGlyphConverter : IValueConverter
              ShortcutAction.Rate => "\xe734",
              ShortcutAction.AddToPlaylist => "\xe8f4",
              ShortcutAction.ViewLyrics => "\xe7bc",
+             ShortcutAction.ShowTrackSummary => "\xf0e3",
              _ => "\xf142"
          } : "\xf142";
 

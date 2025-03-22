@@ -13,6 +13,7 @@ public class ShortcutActionToStringConverter : IValueConverter
              ShortcutAction.Rate => "Rate",
              ShortcutAction.AddToPlaylist => "Add to Playlist",
              ShortcutAction.ViewLyrics => "View Lyrics",
+             ShortcutAction.ShowTrackSummary => "Show Track Summary",
              _ => "N/A"
          } : "N/A";
 

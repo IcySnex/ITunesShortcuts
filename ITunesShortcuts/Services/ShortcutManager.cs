@@ -3,9 +3,9 @@ using ITunesShortcuts.Enums;
 using ITunesShortcuts.EventArgs;
 using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
+using ITunesShortcuts.ViewModels;
 using Microsoft.Extensions.Logging;
 using System.Collections.Specialized;
-using System.Runtime.InteropServices;
 
 namespace ITunesShortcuts.Services;
 
@@ -82,8 +82,7 @@ public class ShortcutManager
                         RateAction(stars);
                         break;
                 }
-            }
-            ,
+            },
             ShortcutAction.AddToPlaylist => args =>
             {
                 switch (shortcut.Parameter)
@@ -95,11 +94,14 @@ public class ShortcutManager
                         AddToPlaylistAction(shortcut.Parameter);
                         break;
                 }
-            }
-            ,
+            },
             ShortcutAction.ViewLyrics => args =>
             {
                 ViewLyrics();
+            },
+            ShortcutAction.ShowTrackSummary => args =>
+            {
+                ShowTrackSummary();
             },
             _ => args => logger.LogInformation("[ShortcutManager-Action] Key [{key}] was pressed: Action type invalid", args.Key)
         };
@@ -239,6 +241,17 @@ public class ShortcutManager
         windowHelper.CreateLyricsView(track, artworkLocation);
 
         logger.LogInformation("[ShortcutManager-Action] Action was invoked: ViewLyrics");
+    }
+
+    void ShowTrackSummary()
+    {
+        IITFileOrCDTrack? track = GetCurrentTrackAndSaveArtwork();
+        if (track is null) return;
+
+        TrackSummaryViewModel viewModel = new(logger, windowHelper, iTunesHelper, track, artworkLocation);
+        windowHelper.CreateTrackSummaryView(viewModel);
+
+        logger.LogInformation("[ShortcutManager-Action] Action was invoked: ShowTrackSummary");
     }
 
 

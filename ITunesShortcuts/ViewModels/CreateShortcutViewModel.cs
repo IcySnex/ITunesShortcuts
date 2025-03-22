@@ -51,6 +51,7 @@ public partial class CreateShortcutViewModel : ObservableObject
         {
             case ShortcutAction.None:
             case ShortcutAction.Get:
+            case ShortcutAction.ShowTrackSummary:
                 Parameters = new[] { "None" };
                 break;
             case ShortcutAction.Rate:

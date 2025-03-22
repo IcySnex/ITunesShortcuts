@@ -6,5 +6,6 @@ public enum ShortcutAction
     Get,
     Rate,
     AddToPlaylist,
-    ViewLyrics
+    ViewLyrics,
+    ShowTrackSummary
 }
