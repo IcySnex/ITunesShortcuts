@@ -12,7 +12,6 @@ public partial class SettingsViewModel
 {
     readonly WindowHelper windowHelper;
     readonly Navigation navigation;
-    readonly ITunesHelper iTunesHelper;
     readonly DiscordRichPresence discordRichPresence;
 
     public Config Configuration { get; }
@@ -29,7 +28,6 @@ public partial class SettingsViewModel
         this.Configuration = configuration.Value;
         this.windowHelper = windowHelper;
         this.navigation = navigation;
-        this.iTunesHelper = iTunesHelper;
         this.discordRichPresence = discordRichPresence;
 
         Info = iTunesHelper.GetInfo();
@@ -47,16 +45,7 @@ public partial class SettingsViewModel
         switch (e.PropertyName)
         {
             case nameof(Configuration.DiscordRichPresence):
-                if (Configuration.DiscordRichPresence)
-                {
-                    discordRichPresence.Update();
-                    iTunesHelper.SetPositionChangedMonitor(true);
-                }
-                else
-                {
-                    discordRichPresence.Clear();
-                    iTunesHelper.SetPositionChangedMonitor(false);
-                }
+                discordRichPresence.Enabled = Configuration.DiscordRichPresence;
                 break;
         }
     }

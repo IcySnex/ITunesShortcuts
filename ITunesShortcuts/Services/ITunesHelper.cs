@@ -5,8 +5,6 @@ using ITunesShortcuts.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System.Diagnostics;
-using System.Timers;
-using Timer = System.Timers.Timer;
 
 namespace ITunesShortcuts.Services;
 
@@ -103,8 +101,6 @@ public partial class ITunesHelper : IDisposable
 
     public bool IsInstalled()
     {
-        logger.LogInformation("[ITunesHelper-IsInstalled] Checking registry for iTunes installation.");
-
         using RegistryKey? key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
 
         if (key is null)
@@ -127,8 +123,6 @@ public partial class ITunesHelper : IDisposable
 
     public bool IsCOMRegistered()
     {
-        logger.LogInformation("[ITunesHelper-IsCOMRegistered] Checking iTunes COM registration.");
-
         try
         {
             Type? type = Type.GetTypeFromProgID("iTunes.Application");
@@ -142,8 +136,6 @@ public partial class ITunesHelper : IDisposable
 
     public bool IsInitialized()
     {
-        logger.LogInformation("[ITunesHelper-IsInitialized] Checking iTunes initialization.");
-
         return iTunes is not null;
     }
 
@@ -189,38 +181,21 @@ public partial class ITunesHelper : IDisposable
         iTunes.OnPlayerPlayEvent += OnPlayerPlayEvent;
         iTunes.OnPlayerStopEvent += OnPlayerStopEvent;
         iTunes.OnQuittingEvent += OnQuittingEvent;
-        positionChangedTimer.Elapsed += PlayerPositionMonitorCallback;
         logger.LogInformation("[ITunesHelper-ValidateInitialization] Hooked events.");
     }
 
 
-    public event EventHandler<ITunesTrackStartedEventArgs>? OnTrackStarted;
-    public event EventHandler<ITunesTrackStoppedEventArgs>? OnTrackStopped;
     public event EventHandler<ITunesTrackChangedEventArgs>? OnTrackChanged;
-    public event EventHandler<ITunesTrackPositionChangedEventArgs>? OnTrackPositionChanged;
 
 
     IITFileOrCDTrack? currentTrack = null;
-    int lastKnownPlayerPosition = 0;
-    Timer positionChangedTimer = new(1000);
-
-    public void SetPositionChangedMonitor(
-        bool enabled) =>
-            positionChangedTimer.Enabled = enabled;
 
     void OnPlayerPlayEvent(
         object iTrack)
     {
-        if (iTrack is not IITFileOrCDTrack track)
+        if (iTrack is not IITFileOrCDTrack track || track.TrackDatabaseID == currentTrack?.TrackDatabaseID)
             return;
 
-        lastKnownPlayerPosition = iTunes.PlayerPosition;
-
-        logger.LogInformation("[ITunesHelper-OnPlayerStopEvent] Player started [{track}].", track.Name);
-        OnTrackStarted?.Invoke(this, new(track));
-
-        if (track.TrackDatabaseID == currentTrack?.TrackDatabaseID)
-            return;
         OnTrackChanged?.Invoke(this, new(currentTrack, track));
         currentTrack = track;
     }
@@ -228,13 +203,7 @@ public partial class ITunesHelper : IDisposable
     void OnPlayerStopEvent(
         object iTrack)
     {
-        if (iTrack is not IITFileOrCDTrack track)
-            return;
-
-        logger.LogInformation("[ITunesHelper-OnPlayerStopEvent] Player stopped [{track}].", track.Name);
-        OnTrackStopped?.Invoke(this, new(track));
-
-        if (iTunes.CurrentTrack is not null)
+        if (iTrack is not IITFileOrCDTrack track || iTunes.CurrentTrack is not null)
             return;
 
         OnTrackChanged?.Invoke(this, new(currentTrack, null));
@@ -248,25 +217,6 @@ public partial class ITunesHelper : IDisposable
         disposedValue = false;
     }
 
-    void PlayerPositionMonitorCallback(
-        object? _,
-        ElapsedEventArgs _1)
-    {
-        try
-        {
-            int currentPosition = iTunes.CurrentTrack is not null ? iTunes.PlayerPosition : 0;
-            if (Math.Abs(currentPosition - lastKnownPlayerPosition) < 3)
-            {
-                lastKnownPlayerPosition = currentPosition;
-                return;
-            }
-
-            logger.LogInformation("[ITunesHelper-PlayerPositionMonitorCallback] Player Position changed [{newPosition}].", currentPosition);
-            OnTrackPositionChanged?.Invoke(this, new(TimeSpan.FromSeconds(lastKnownPlayerPosition), TimeSpan.FromSeconds(currentPosition)));
-            lastKnownPlayerPosition = currentPosition;
-        } catch { }
-    }
-
 
 
     public IITFileOrCDTrack? GetCurrentTrack()
@@ -276,17 +226,15 @@ public partial class ITunesHelper : IDisposable
         if (iTunes.CurrentTrack is not IITFileOrCDTrack track)
             return null;
 
-        logger.LogInformation("[ITunesHelper-GetCurrentTrack] Got current playing track.");
         return track;
     }
 
-    public (bool IsPlaying, TimeSpan ElapsedTime) GetPlayerState()
+    public (bool IsPlaying, int Position) GetPlayerState()
     {
         bool isPlaying = iTunes.PlayerState == ITPlayerState.ITPlayerStatePlaying;
         int elapsedSeconds = iTunes.PlayerPosition;
 
-        logger.LogInformation("[ITunesHelper-GetPlayerState] Got player state.");
-        return (isPlaying, new(0, 0, elapsedSeconds));
+        return (isPlaying, elapsedSeconds);
     }
 
     public IEnumerable<IITUserPlaylist> GetAllPlaylists()
@@ -294,8 +242,6 @@ public partial class ITunesHelper : IDisposable
         ValidateInitialization();
 
         IEnumerable<IITUserPlaylist> playlists = iTunes.LibrarySource.Playlists.OfType<IITUserPlaylist>().Where(playlist => playlist.SpecialKind == ITUserPlaylistSpecialKind.ITUserPlaylistSpecialKindNone && !playlist.Smart);
-
-        logger.LogInformation("[ITunesHelper-GetAllPlaylists] Got all library playlists.");
         return playlists;
     }
 

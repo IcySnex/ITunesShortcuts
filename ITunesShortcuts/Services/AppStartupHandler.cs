@@ -55,13 +55,6 @@ public class AppStartupHandler
             iTunesHelper.ValidateCOMRegistration();
             iTunesHelper.ValidateInitialization();
 
-            iTunesHelper.OnTrackStarted += (s, e) =>
-                discordRichPresence.Update();
-            iTunesHelper.OnTrackStopped += (s, e) =>
-                discordRichPresence.Clear();
-            iTunesHelper.OnTrackPositionChanged += (s, e) =>
-                discordRichPresence.UpdateTimestamps(e.NewPosition);
-
             iTunesHelper.OnTrackChanged += (s, e) =>
             {
                 if (!configuration.Value.ShowTrackSummary || e.OldTrack is null)
@@ -115,15 +108,7 @@ public class AppStartupHandler
             }
 
             // Discord Rich Presence
-            if (configuration.Value.DiscordRichPresence)
-            {
-                discordRichPresence.Update();
-                iTunesHelper.SetPositionChangedMonitor(true);
-            }
-            else
-            {
-                discordRichPresence.Clear();
-            }
+            discordRichPresence.Enabled = configuration.Value.DiscordRichPresence;
 
             // Finish
             navigation.Navigate("Home");
@@ -152,10 +137,9 @@ public class AppStartupHandler
 
         systemTray.Disable();
 
-        iTunesHelper.SetPositionChangedMonitor(false);
         iTunesHelper.Dispose();
 
-        discordRichPresence.Clear();
+        discordRichPresence.Enabled = false;
 
         windowHelper.LoggerView?.Close();
         windowHelper.LyricsView?.Close();

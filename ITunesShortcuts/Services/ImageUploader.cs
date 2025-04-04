@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Drawing.Imaging;
-using System.Drawing;
-using System.Runtime.Versioning;
 using System.Text.Json;
 using System.Text;
 
@@ -44,41 +41,47 @@ public class ImageUploader
 
     async Task<string> UploadAsync(
         string filePath,
-        int resolution)
+        CancellationToken token = default!)
     {
         logger.LogInformation("[ImageUploader-UploadAsync] Uploading image...");
 
-        byte[] image = await File.ReadAllBytesAsync(filePath);
+        byte[] image = await File.ReadAllBytesAsync(filePath, token);
         HttpRequestMessage request = new(HttpMethod.Post, "https://freeimage.host/api/1/upload")
         {
             Content = new StringContent($"key=6d207e02198a847aa98d0a2a901485a5&image={Uri.EscapeDataString(Convert.ToBase64String(image))}", Encoding.UTF8, "application/x-www-form-urlencoded")
         };
 
-        HttpResponseMessage response = await client.SendAsync(request);
+        HttpResponseMessage response = await client.SendAsync(request, token);
         response.EnsureSuccessStatusCode();
 
-        string json = await response.Content.ReadAsStringAsync();
+        string json = await response.Content.ReadAsStringAsync(token);
         string? url = JsonDocument.Parse(json).RootElement.GetProperty("image").GetProperty("url").GetString();
 
         return url!;
     }
 
     public async Task<string?> GetAsync(
-        string filePath)
+        string filePath,
+        CancellationToken token = default!)
     {
         if (onlineImageCache.TryGetValue(filePath, out string? result))
             return result;
 
         try
         {
-            string url = await UploadAsync(filePath, 128);
+            string url = await UploadAsync(filePath, token);
             onlineImageCache[filePath] = url;
 
             return url;
         }
+        catch (OperationCanceledException)
+        {
+            logger.LogInformation("[ImageUploader-GetAsync] Cancelled image upload.");
+            return null;
+        }
         catch (Exception ex)
         {
-            logger.LogInformation("[ImageUploader-GetAsync] Failed to upload image: {exception}", ex.Message);
+            logger.LogError("[ImageUploader-GetAsync] Failed to upload image: {exception}", ex.Message);
             return null;
         }
     }
