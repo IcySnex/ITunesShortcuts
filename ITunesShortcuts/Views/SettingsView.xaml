@@ -10,12 +10,13 @@
     NavigationCacheMode="Enabled"
     mc:Ignorable="d">
 
-    <StackPanel
-        Grid.Row="2"
-        Margin="24,36"
-        Spacing="24">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <Grid Margin="-24,-36,-24,0" Background="{StaticResource SolidBackgroundFillColorBaseBrush}">
+        <Grid Background="{StaticResource SolidBackgroundFillColorBaseBrush}">
             <Button
                 Width="106"
                 Height="36"
@@ -39,101 +40,111 @@
             </Button>
         </Grid>
 
-        <StackPanel Style="{StaticResource ContainerStyle}">
-            <TextBlock
-                Margin="0,0,0,4"
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="Settings" />
+        <ScrollViewer Grid.Row="1">
+            <Grid Margin="24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="24" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <ContentControl
-                hlp:Attributes.Description="Run iTunesShortcuts at Windows startup"
-                hlp:Attributes.Glyph="&#xe81c;"
-                hlp:Attributes.Title="Auto Start"
-                Style="{StaticResource SettingsCard}">
+                <StackPanel Style="{StaticResource ContainerStyle}">
+                    <TextBlock
+                        Margin="0,0,0,4"
+                        Style="{StaticResource SubtitleTextBlockStyle}"
+                        Text="Settings" />
 
-                <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.IsAutoStartEnabled, Mode=TwoWay}" />
-            </ContentControl>
+                    <ContentControl
+                        hlp:Attributes.Description="Run iTunesShortcuts at Windows startup"
+                        hlp:Attributes.Glyph="&#xe81c;"
+                        hlp:Attributes.Title="Auto Start"
+                        Style="{StaticResource SettingsCard}">
 
-            <Rectangle Style="{StaticResource DividerStyle}" />
+                        <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.IsAutoStartEnabled, Mode=TwoWay}" />
+                    </ContentControl>
 
-            <ContentControl
-                hlp:Attributes.Description="When launching automatically minimize to tray"
-                hlp:Attributes.Glyph="&#xed1a;"
-                hlp:Attributes.Title="Launch minimized"
-                Style="{StaticResource SettingsCard}">
+                    <Rectangle Style="{StaticResource DividerStyle}" />
 
-                <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.LaunchMinimized, Mode=TwoWay}" />
-            </ContentControl>
+                    <ContentControl
+                        hlp:Attributes.Description="When launching automatically minimize to tray"
+                        hlp:Attributes.Glyph="&#xed1a;"
+                        hlp:Attributes.Title="Launch minimized"
+                        Style="{StaticResource SettingsCard}">
 
-            <Rectangle Style="{StaticResource DividerStyle}" />
+                        <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.LaunchMinimized, Mode=TwoWay}" />
+                    </ContentControl>
 
-            <ContentControl
-                hlp:Attributes.Description="Minimize the app to the system tray instead of quitting it on window close"
-                hlp:Attributes.Glyph="&#xe8fc;"
-                hlp:Attributes.Title="Minimize To Tray"
-                Style="{StaticResource SettingsCard}">
+                    <Rectangle Style="{StaticResource DividerStyle}" />
 
-                <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.MinimizeToTray, Mode=TwoWay}" />
-            </ContentControl>
+                    <ContentControl
+                        hlp:Attributes.Description="Minimize the app to the system tray instead of quitting it on window close"
+                        hlp:Attributes.Glyph="&#xe8fc;"
+                        hlp:Attributes.Title="Minimize To Tray"
+                        Style="{StaticResource SettingsCard}">
 
-            <Rectangle Style="{StaticResource DividerStyle}" />
+                        <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.MinimizeToTray, Mode=TwoWay}" />
+                    </ContentControl>
 
-            <ContentControl
-                hlp:Attributes.Description="Show a track summary window after a track gets finished playing"
-                hlp:Attributes.Glyph="&#xf0e3;"
-                hlp:Attributes.Title="Show Track Summary"
-                Style="{StaticResource SettingsCard}">
+                    <Rectangle Style="{StaticResource DividerStyle}" />
 
-                <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.ShowTrackSummary, Mode=TwoWay}" />
-            </ContentControl>
+                    <ContentControl
+                        hlp:Attributes.Description="Show a track summary window after a track gets finished playing"
+                        hlp:Attributes.Glyph="&#xf0e3;"
+                        hlp:Attributes.Title="Show Track Summary"
+                        Style="{StaticResource SettingsCard}">
 
-            <Rectangle Style="{StaticResource DividerStyle}" />
+                        <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.ShowTrackSummary, Mode=TwoWay}" />
+                    </ContentControl>
 
-            <ContentControl
-                hlp:Attributes.Description="Share listening information on Discord"
-                hlp:Attributes.Glyph="&#xe8f2;"
-                hlp:Attributes.Title="Discord Rich Presence"
-                Style="{StaticResource SettingsCard}">
+                    <Rectangle Style="{StaticResource DividerStyle}" />
 
-                <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.DiscordRichPresence, Mode=TwoWay}" />
-            </ContentControl>
+                    <ContentControl
+                        hlp:Attributes.Description="Share listening information on Discord"
+                        hlp:Attributes.Glyph="&#xe8f2;"
+                        hlp:Attributes.Title="Discord Rich Presence"
+                        Style="{StaticResource SettingsCard}">
 
-            <Rectangle Style="{StaticResource DividerStyle}" />
+                        <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.DiscordRichPresence, Mode=TwoWay}" />
+                    </ContentControl>
 
-            <ContentControl
-                hlp:Attributes.Description="Creates and shows a new lgoger window"
-                hlp:Attributes.Glyph="&#xe7bc;"
-                hlp:Attributes.Title="Logger"
-                Style="{StaticResource SettingsCard}">
+                    <Rectangle Style="{StaticResource DividerStyle}" />
 
-                <Button Command="{x:Bind viewModel.LoggerCommand}" Content="Show" />
-            </ContentControl>
-        </StackPanel>
+                    <ContentControl
+                        hlp:Attributes.Description="Creates and shows a new lgoger window"
+                        hlp:Attributes.Glyph="&#xe7bc;"
+                        hlp:Attributes.Title="Logger"
+                        Style="{StaticResource SettingsCard}">
 
-        <StackPanel Style="{StaticResource ContainerStyle}">
-            <TextBlock
-                Margin="0,0,0,4"
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="iTunes Information" />
+                        <Button Command="{x:Bind viewModel.LoggerCommand}" Content="Show" />
+                    </ContentControl>
+                </StackPanel>
 
-            <ContentControl
-                hlp:Attributes.Description="{x:Bind viewModel.Info.Version, TargetNullValue='N/A', FallbackValue='N/A'}"
-                hlp:Attributes.Title="Current Version:"
-                Style="{StaticResource InfoCard}" />
+                <StackPanel Grid.Row="2" Style="{StaticResource ContainerStyle}">
+                    <TextBlock
+                        Margin="0,0,0,4"
+                        Style="{StaticResource SubtitleTextBlockStyle}"
+                        Text="iTunes Information" />
 
-            <Rectangle Style="{StaticResource DividerStyle}" />
+                    <ContentControl
+                        hlp:Attributes.Description="{x:Bind viewModel.Info.Version, TargetNullValue='N/A', FallbackValue='N/A'}"
+                        hlp:Attributes.Title="Current Version:"
+                        Style="{StaticResource InfoCard}" />
 
-            <ContentControl
-                hlp:Attributes.Description="{x:Bind viewModel.Info.InstallationLocation, TargetNullValue='N/A', FallbackValue='N/A'}"
-                hlp:Attributes.Title="Installation Location:"
-                Style="{StaticResource InfoCard}" />
+                    <Rectangle Style="{StaticResource DividerStyle}" />
 
-            <Rectangle Style="{StaticResource DividerStyle}" />
+                    <ContentControl
+                        hlp:Attributes.Description="{x:Bind viewModel.Info.InstallationLocation, TargetNullValue='N/A', FallbackValue='N/A'}"
+                        hlp:Attributes.Title="Installation Location:"
+                        Style="{StaticResource InfoCard}" />
 
-            <ContentControl
-                hlp:Attributes.Description="{x:Bind viewModel.Info.InstalledAt.Value.ToString('MMMM d, yyyy'), TargetNullValue='N/A', FallbackValue='N/A'}"
-                hlp:Attributes.Title="Installed At:"
-                Style="{StaticResource InfoCard}" />
-        </StackPanel>
-    </StackPanel>
+                    <Rectangle Style="{StaticResource DividerStyle}" />
+
+                    <ContentControl
+                        hlp:Attributes.Description="{x:Bind viewModel.Info.InstalledAt.Value.ToString('MMMM d, yyyy'), TargetNullValue='N/A', FallbackValue='N/A'}"
+                        hlp:Attributes.Title="Installed At:"
+                        Style="{StaticResource InfoCard}" />
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
 </Page>
