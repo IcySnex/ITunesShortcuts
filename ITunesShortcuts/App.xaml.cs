@@ -53,6 +53,8 @@ public partial class App : Application
                 services.AddSingleton<SystemTray>();
                 services.AddSingleton<ShortcutManager>();
                 services.AddSingleton<KeyboardListener>();
+                services.AddSingleton<ImageUploader>();
+                services.AddSingleton<DiscordRichPresence>();
             })
             .Build();
         Provider = host.Services;

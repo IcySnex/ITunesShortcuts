@@ -102,7 +102,7 @@ public class WindowHelper
 
     public void CreateLyricsView(
         IITFileOrCDTrack track,
-        string artworkLocation)
+        string? artworkLocation)
     {
         LyricsView?.Close();
         TrackSummaryView?.Close();

@@ -90,6 +90,17 @@
             <Rectangle Style="{StaticResource DividerStyle}" />
 
             <ContentControl
+                hlp:Attributes.Description="Share listening information on Discord"
+                hlp:Attributes.Glyph="&#xe8f2;"
+                hlp:Attributes.Title="Discord Rich Presence"
+                Style="{StaticResource SettingsCard}">
+
+                <ToggleSwitch Margin="0,0,-82,0" IsOn="{x:Bind viewModel.Configuration.DiscordRichPresence, Mode=TwoWay}" />
+            </ContentControl>
+
+            <Rectangle Style="{StaticResource DividerStyle}" />
+
+            <ContentControl
                 hlp:Attributes.Description="Creates and shows a new lgoger window"
                 hlp:Attributes.Glyph="&#xe7bc;"
                 hlp:Attributes.Title="Logger"

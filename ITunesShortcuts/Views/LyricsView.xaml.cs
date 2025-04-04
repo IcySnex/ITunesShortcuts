@@ -22,14 +22,14 @@ public sealed partial class LyricsView : Window
 {
     public LyricsView(
         IITFileOrCDTrack track,
-        string artworkLocation)
+        string? artworkLocation)
     {
         Name = track.Name;
         Artist = track.Artist;
         Album = track.Album;
         Lyrics = track.Lyrics;
         ArtworkLocation = artworkLocation;
-        Artwork = new(new(artworkLocation))
+        Artwork = artworkLocation is null ? null : new(new(artworkLocation))
         {
             CreateOptions = BitmapCreateOptions.IgnoreImageCache
         };
@@ -49,9 +49,9 @@ public sealed partial class LyricsView : Window
 
     public string Lyrics { get; }
 
-    public string ArtworkLocation { get; }
+    public string? ArtworkLocation { get; }
 
-    public BitmapImage Artwork { get; }
+    public BitmapImage? Artwork { get; }
 
 
     CanvasBitmap? image = null;
@@ -68,6 +68,9 @@ public sealed partial class LyricsView : Window
     async Task PrepareCanvasAsync(
         CanvasControl canvas)
     {
+        if (ArtworkLocation is null)
+            return;
+
         using (IRandomAccessStream fileStream = File.OpenRead(ArtworkLocation).AsRandomAccessStream())
             image = await CanvasBitmap.LoadAsync(canvas, fileStream);
 

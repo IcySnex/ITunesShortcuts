@@ -16,14 +16,14 @@ public partial class TrackSummaryViewModel : ObservableObject, IDisposable
     readonly ITunesHelper iTunesHelper;
 
     public IITFileOrCDTrack Track { get; set; }
-    readonly string artworkLocation;
+    readonly string? artworkLocation;
 
     public TrackSummaryViewModel(
         ILogger logger,
         WindowHelper windowHelper,
         ITunesHelper iTunesHelper,
         IITFileOrCDTrack track,
-        string artworkLocation)
+        string? artworkLocation)
     {
         this.logger = logger;
         this.windowHelper = windowHelper;
@@ -60,7 +60,7 @@ public partial class TrackSummaryViewModel : ObservableObject, IDisposable
         }
 
         // Unmanaged
-        Marshal.ReleaseComObject(Track);
+        //Marshal.ReleaseComObject(Track);
         Track = default!;
         
         GC.Collect();
@@ -77,7 +77,7 @@ public partial class TrackSummaryViewModel : ObservableObject, IDisposable
     }
 
 
-    public string Artwork => artworkLocation;
+    public string? Artwork => artworkLocation;
 
     public string[] Playlists { get; set; } = default!;
 

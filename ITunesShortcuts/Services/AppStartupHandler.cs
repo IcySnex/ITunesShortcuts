@@ -1,10 +1,11 @@
-﻿using ITunesShortcuts.Helpers;
+﻿using DiscordRPC;
+using iTunesLib;
+using ITunesShortcuts.Helpers;
 using ITunesShortcuts.Models;
 using ITunesShortcuts.ViewModels;
 using ITunesShortcuts.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Diagnostics;
 
 namespace ITunesShortcuts.Services;
 
@@ -18,8 +19,8 @@ public class AppStartupHandler
     readonly ITunesHelper iTunesHelper;
     readonly SystemTray systemTray;
     readonly KeyboardListener keyboardListener;
-
-    readonly string artworkLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tempArtwork.jpg");
+    readonly ImageUploader imageUploader;
+    readonly DiscordRichPresence discordRichPresence;
 
     public AppStartupHandler(
         ILogger<AppStartupHandler> logger,
@@ -32,7 +33,9 @@ public class AppStartupHandler
         ITunesHelper iTunesHelper,
         SystemTray systemTray,
         ShortcutManager shortcutManager,
-        KeyboardListener keyboardListener)
+        KeyboardListener keyboardListener,
+        ImageUploader imageUploader,
+        DiscordRichPresence discordRichPresence)
     {
         this.logger = logger;
         this.configuration = configuration.Value;
@@ -42,33 +45,45 @@ public class AppStartupHandler
         this.iTunesHelper = iTunesHelper;
         this.systemTray = systemTray;
         this.keyboardListener = keyboardListener;
+        this.imageUploader = imageUploader;
+        this.discordRichPresence = discordRichPresence;
 
         try
         {
+            // iTunes
             iTunesHelper.ValidateInstallation();
             iTunesHelper.ValidateCOMRegistration();
             iTunesHelper.ValidateInitialization();
+
+            iTunesHelper.OnTrackStarted += (s, e) =>
+                discordRichPresence.Update();
+            iTunesHelper.OnTrackStopped += (s, e) =>
+                discordRichPresence.Clear();
+            iTunesHelper.OnTrackPositionChanged += (s, e) =>
+                discordRichPresence.UpdateTimestamps(e.NewPosition);
+
             iTunesHelper.OnTrackChanged += (s, e) =>
             {
                 if (!configuration.Value.ShowTrackSummary || e.OldTrack is null)
                     return;
 
-                iTunesHelper.SaveArtwork(artworkLocation, e.OldTrack);
-
                 mainView.DispatcherQueue.TryEnqueue(() =>
                 {
-                    TrackSummaryViewModel viewModel = new(logger, windowHelper, iTunesHelper, e.OldTrack, artworkLocation);
+                    TrackSummaryViewModel viewModel = new(logger, windowHelper, iTunesHelper, e.OldTrack, e.OldTrack.GetArtworkFilePath());
                     windowHelper.CreateTrackSummaryView(viewModel);
                 });
             };
 
+            // Notifications
             notifications.Register();
             notifications.ClearAsync().AsTask();
 
+            // Shortcuts
             keyboardListener.Start();
 
             shortcutManager.Load();
 
+            // Window
             windowHelper.SetIcon("icon.ico");
             windowHelper.SetMinSize(375, 600);
             windowHelper.SetSize(480, 800);
@@ -87,6 +102,7 @@ public class AppStartupHandler
                 PrepareShutdown();
             };
 
+            // System Tray
             systemTray.Enable();
             if (configuration.Value.LaunchMinimized)
             {
@@ -98,6 +114,18 @@ public class AppStartupHandler
                 mainView.Activate();
             }
 
+            // Discord Rich Presence
+            if (configuration.Value.DiscordRichPresence)
+            {
+                discordRichPresence.Update();
+                iTunesHelper.SetPositionChangedMonitor(true);
+            }
+            else
+            {
+                discordRichPresence.Clear();
+            }
+
+            // Finish
             navigation.Navigate("Home");
 
             logger.LogInformation("[AppStartupHandler-.ctor] App fully started.");
@@ -124,7 +152,10 @@ public class AppStartupHandler
 
         systemTray.Disable();
 
+        iTunesHelper.SetPositionChangedMonitor(false);
         iTunesHelper.Dispose();
+
+        discordRichPresence.Clear();
 
         windowHelper.LoggerView?.Close();
         windowHelper.LyricsView?.Close();
@@ -132,6 +163,8 @@ public class AppStartupHandler
 
         string config = converter.ToString(configuration);
         File.WriteAllText("configuration.json", config);
+
+        imageUploader.SaveOnlineCache();
 
         logger.LogInformation("[AppStartupHandler-PrepareShutdown] Closed main window.");
     }

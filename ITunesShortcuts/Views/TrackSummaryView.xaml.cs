@@ -30,6 +30,9 @@ public sealed partial class TrackSummaryView : UserControl
     async Task PrepareCanvasAsync(
         CanvasControl canvas)
     {
+        if (viewModel.Artwork is null)
+            return;
+
         using (IRandomAccessStream fileStream = File.OpenRead(viewModel.Artwork).AsRandomAccessStream())
             image = await CanvasBitmap.LoadAsync(canvas, fileStream);
 

@@ -40,4 +40,7 @@ public partial class Config : ObservableObject
 
     [ObservableProperty]
     bool showTrackSummary = false;
+
+    [ObservableProperty]
+    bool discordRichPresence = true;
 }
