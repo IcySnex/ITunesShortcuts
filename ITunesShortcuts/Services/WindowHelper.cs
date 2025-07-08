@@ -113,7 +113,8 @@ public class WindowHelper
             LyricsView = null;
         };
 
-        WindowId id = Win32Interop.GetWindowIdFromWindow(GetHWnd(LyricsView));
+        IntPtr hWnd = GetHWnd(LyricsView);
+        WindowId id = Win32Interop.GetWindowIdFromWindow(hWnd);
         DisplayArea display = DisplayArea.GetFromWindowId(id, DisplayAreaFallback.Nearest);
 
         AppWindow window = AppWindow.GetFromWindowId(id);
@@ -127,7 +128,7 @@ public class WindowHelper
         presenter.IsMaximizable = false;
         presenter.IsAlwaysOnTop = true;
 
-        LyricsView.Activate();
+        Win32.ShowWindow(hWnd, 4);
 
         logger.LogInformation("[WindowHelper-CreateLyricsView] Created new LyricsView and hooked handler");
     }
@@ -152,7 +153,8 @@ public class WindowHelper
             viewModel.Dispose();
         };
 
-        WindowId id = Win32Interop.GetWindowIdFromWindow(GetHWnd(TrackSummaryView));
+        IntPtr hWnd = GetHWnd(TrackSummaryView);
+        WindowId id = Win32Interop.GetWindowIdFromWindow(hWnd);
         DisplayArea display = DisplayArea.GetFromWindowId(id, DisplayAreaFallback.Nearest);
 
         AppWindow window = AppWindow.GetFromWindowId(id);
@@ -175,7 +177,7 @@ public class WindowHelper
             window.Move(new(display.WorkArea.Width - 512, display.WorkArea.Height - (viewModel.HasLyrics ? 418 : 348)));
         };
 
-        TrackSummaryView.Activate();
+        Win32.ShowWindow(hWnd, 4);
 
         logger.LogInformation("[WindowHelper-CreateTrackSummaryView] Created new TrackSummaryView and hooked handler");
     }

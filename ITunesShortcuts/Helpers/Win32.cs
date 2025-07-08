@@ -127,6 +127,18 @@ public abstract class Win32
     [DllImport("user32.dll")]
     public static extern bool SetForegroundWindow(IntPtr hWnd);
 
+    [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+    public static extern bool SetWindowPos(
+        int hWnd,
+        int hWndInsertAfter,
+        int x,
+        int y,
+        int cx,
+        int cy,
+        uint uFlags);
+
+    [DllImport("user32.dll")]
+    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
 
     public static IntPtr SetWindowLongAll(
